@@ -27,6 +27,7 @@ Usage information can be found by reading the vignettes: `browseVignettes("clean
   - `+` adds values from the assays in 2 se's
   - `/` divides values from the assays in 2 se's
   - `*` multiplies values from the assays in 2 se's
+  - `round` rounds the assay values of a se
 
 ## Supported write functions
 
@@ -37,12 +38,28 @@ Usage information can be found by reading the vignettes: `browseVignettes("clean
 ## Installation
 ``` r
 # install.packages("devtools")
-devtools::install_github("martijnvanattekum/cleanse")
+devtools::install_github("martijnvanattekum/cleanse", build_opts = c("--no-resave-data", "--no-manual"))
 ```
 
 ## Usage
 ``` r
 library(cleanse)
+
+# -- An example se called seq_se is provided
+
+# Example pipe
+seq_se %>%
+  filter(gene_group == "NOTCH") %>%
+  select(site %in% c("brain", "skin")) %>%
+  arrange(col, patient) %>%
+  round(3) %>%
+  write_csv("expression", "out.csv")
+
+# Example sampling
+seq_se %>% sample_n(row, 5)
+
+# Example arithmetic subtracting the expression values at T=0 from T=4
+(select(seq_se, time == 4)) - (select(seq_se, time == 0))
 ```
 
 ## Getting help
