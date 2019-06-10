@@ -1,0 +1,81 @@
+---
+title: "Manipulating SummarizedExperiments with dplyr functions"
+author: "Martijn van Attekum"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Manipulating SummarizedExperiments with dplyr functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The SummarizedExperiment (se) class offers a useful way to store multiple row and column
+data along with the values from an experiment and is widely used in computational biology.
+Although subsetting se's is possible with base R notation (ie using `[]`), se's lack methods
+for dplyr functions such as `filter` and `select`, which excludes se's from easily being used in pipes.
+This package offers methods for the dplyr functions and will automatically dispatch
+your se to the relevant function.
+
+The package contains an example se called `seq_se`. The example contains
+dummy data of expression and copy number values for 10 genes and 48 different conditions.
+To get an overview of the different options available in the se, use print_options:
+```{r}
+library(dplyr)
+library(SummarizedExperiment)
+library(cleanse)
+print_options(seq_se)
+```
+  
+As you can see, seq_se contains expression and copy_number data for samples taken from
+3 different sites, which were treated with either treatment A or B for 0 or 4 hours for 4
+different patients. The genes that were sequenced are from 3 different gene groups:
+IL, NOTCH, and TLR
+
+## Using dplyr functions
+The `filter` and `select` functions from the dplyr package allow you to select rows and
+columns respectively from a data frame and have been designed such that they integrate
+into pipes. This functionalty has here been extended to the SummarizedExperiment.
+
+```{r}
+seq_se %>% filter(gene_group == "IL")
+seq_se %>% select(treatment == "B", site %in% c("brain", "skin"))
+```
+
+Note that the selection criteria for the `select` function follow the notation of dplyr's
+`mutate` function, where the variable names are based on the names from the se's attached colData.
+
+The `arrange`, sample, and `mutate` function in dplyr act rowwise. As se's contain both row-
+and colData, an extra argument is now supplied to have the action performed on either
+the `row` or the `col`.
+
+For instance, we can use the `arrange` function to consecutively sort a data frame by rows. 
+In this case, we first arrange by gene_group and next by gene_name.
+```{r}
+seq_se %>% arrange(row, gene_group, gene_name)
+```
+
+The extended sample_n and sample_frac functions filters n random rows/cols 
+or a random fraction of the rows/cols respectively
+```{r}
+seq_se %>% sample_n(col, size = 4, replace = TRUE)
+seq_se %>% sample_frac(row, size = .5)
+```
+
+Lastly, mutate is normally used to add or change columns to a data frame based on 
+existing columns. Again, the new variables can be added to the colData or the 
+rowData of the SummarizedExperiment. If we for instance want to change the time 
+for the samples from hours to minutes, we can do
+```{r}
+seq_se %>% mutate(col, time = (time * 60))
+```
+or to combine the gene groups and gene names to one new variable in the rowData
+```{r}
+seq_se %>% mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
+```

@@ -1,0 +1,1 @@
+.onAttach <- function(libname, pkgname){packageStartupMessage('Run browseVignettes("cleanse") to get started.')}

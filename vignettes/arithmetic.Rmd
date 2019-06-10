@@ -1,0 +1,36 @@
+---
+title: "Arithmetic operations on SummarizedExperiments"
+author: "Martijn van Attekum"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Arithmetic operations on SummarizedExperiments}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Occasionally, we want to perform arithmetic operations on the values contained in
+2 se's, for instance when subtracting control values from treated values.  
+
+If we want to subtract the values from T=0 from the values at T=4, this can
+be achieved with a combination of ```select``` and ```-```. Take into account that columns are
+subtracted by position and we have to ensure that the columns match up. 
+The ```arrange``` function might be helpful to ensure this. (as shown below, not strictly
+necessary for the example se though)
+```{r}
+library(dplyr)
+library(SummarizedExperiment)
+library(cleanse)
+seq_se_t0 <- seq_se %>% select(time == 0) %>% arrange(col, patient, site, treatment)
+seq_se_t4 <- seq_se %>% select(time == 4) %>% arrange(col, patient, site, treatment)
+seq_se_diff <- seq_se_t4 - seq_se_t0
+```
+Similarly, functions for ```+```, ```/```, and ```*```, can be used.
+ 
