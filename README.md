@@ -5,9 +5,9 @@
 
 The SummarizedExperiment (se) class offers a useful way to store multiple row and column data along with the values from an experiment and is widely used in computational biology.  
 Although subsetting se's is possible with base R notation (ie using ```[]```), se's cannot be manipulated using grammar from the tidyverse. This package contains a number of wrapper functions to extend the usage of se's:
-- dplyr functions: used to be able to dplyr's grammar of data manipulation
-- arithmetic functions: used to peform arithmetic on 2 se's
-- write functions: used to print the options of a se and to write se's to delimited files
+- dplyr functions: to use dplyr's grammar of data manipulation
+- arithmetic functions: to peform arithmetic on 2 se's
+- write functions: to print the options of a se and to write se's to delimited files
 
 Usage information can be found by reading the vignettes: `browseVignettes("cleanse")`.
 
