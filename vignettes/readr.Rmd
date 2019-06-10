@@ -20,12 +20,25 @@ knitr::opts_chunk$set(
 Due to their unique ability to contain row- and colData, SummarizedExperiments (se's) 
 can not be written to a delimited file using functions such as write_csv. 
 A set of functions is provided to mimic the write_<format> functions of readr.
-To write the example `seq_se` to a file, use
-```{r}
+Currently, read_csv, read_tsv, and read_delim can be used.
+To round the example `seq_se` and write it to a csv file, use
+```{r message=FALSE}
 library(dplyr)
 library(SummarizedExperiment)
 library(cleanse)
-write_se_to_csv(seq_se, "expression", "out.csv")
 ```
-
- 
+```{r eval=FALSE}
+seq_se %>% round(3) %>% write_csv("expression", "out.csv")
+```
+When not providing a folder, the output is written to the current working directory.
+The beginning of the out.csv file will look like:
+```
+EXPRESSION gene_group gene_name                            
+   patient                           1      2      3      4 ...
+      site                        skin   skin   skin   skin ...
+      time                           0      0      0      0 ...
+ treatment                           A      A      A      A ...
+                   IL     IL1R1 15.053  2.617 20.093 12.464 ...
+                   IL     IL1R2  4.876 16.154 19.834  6.419 ...
+                  ...       ...    ...    ...    ...    ... ...
+```

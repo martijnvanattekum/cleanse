@@ -242,9 +242,13 @@ print_options <- function(se) {
 #' @param path Path or connection to write to
 #' @examples
 #' # write the example se to csv
-#' seq_se %>% round(3) %>% write_se_to_csv("expression", "out.csv")
+#' seq_se %>% round(3) %>% write_csv("expression", "out.csv")
 #' @export
-write_se_to_csv <- function(se, assayname, path){ #for each assay
+write_csv <- function(se, assayname, path){UseMethod("write_csv")}
+
+#' @rdname write_csv
+#' @export
+write_csv <- function(se, assayname, path){ #for each assay
   if (!assayname %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay ", assayname, " does not exist in the supplied se."))
   readr::write_csv(get_delim_df(se, assayname), path, col_names = FALSE)
 }
@@ -257,9 +261,13 @@ write_se_to_csv <- function(se, assayname, path){ #for each assay
 #' @param path Path or connection to write to
 #' @examples
 #' # write the example se to tsv
-#' seq_se %>% round(3) %>% write_se_to_tsv("expression", "out.tsv")
+#' seq_se %>% round(3) %>% write_tsv("expression", "out.tsv")
 #' @export
-write_se_to_tsv <- function(se, assayname, path){ #for each assay
+write_tsv <- function(se, assayname, path){UseMethod("write_tsv")}
+
+#' @rdname write_tsv
+#' @export
+write_tsv <- function(se, assayname, path){ #for each assay
   if (!assayname %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay ", assayname, " does not exist in the supplied se."))
   readr::write_tsv(get_delim_df(se, assayname), path, col_names = FALSE)
 }
@@ -273,9 +281,13 @@ write_se_to_tsv <- function(se, assayname, path){ #for each assay
 #' @param delim Delimiter used to separate values
 #' @examples
 #' # write the example se to delim file, defaulting to " " as delimiter
-#' seq_se %>% round(3) %>% write_se_to_delim("expression", "out.txt")
+#' seq_se %>% round(3) %>% write_delim("expression", "out.txt")
 #' @export
-write_se_to_delim <- function(se, assayname, path, delim = " "){ #for each assay
+write_delim <- function(se, assayname, path, delim){UseMethod("write_delim")}
+
+#' @rdname write_delim
+#' @export
+write_delim <- function(se, assayname, path, delim = " "){ #for each assay
   if (!assayname %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay ", assayname, " does not exist in the supplied se."))
   readr::write_delim(get_delim_df(se, assayname), path, col_names = FALSE)
 }

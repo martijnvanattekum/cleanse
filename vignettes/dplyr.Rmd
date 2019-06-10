@@ -26,10 +26,12 @@ your se to the relevant function.
 The package contains an example se called `seq_se`. The example contains
 dummy data of expression and copy number values for 10 genes and 48 different conditions.
 To get an overview of the different options available in the se, use print_options:
-```{r}
+```{r message=FALSE}
 library(dplyr)
 library(SummarizedExperiment)
 library(cleanse)
+```
+```{r}
 print_options(seq_se)
 ```
   
@@ -44,8 +46,11 @@ columns respectively from a data frame and have been designed such that they int
 into pipes. This functionalty has here been extended to the SummarizedExperiment.
 
 ```{r}
-seq_se %>% filter(gene_group == "IL")
-seq_se %>% select(treatment == "B", site %in% c("brain", "skin"))
+genes_subset_se <- seq_se %>% filter(gene_group == "IL")
+print_options(genes_subset_se)  #note the change in available gene_groups
+
+sample_subset_se <- seq_se %>% select(treatment == "B", site %in% c("brain", "skin"))
+print_options(sample_subset_se) #note the change in available treatment and site
 ```
 
 Note that the selection criteria for the `select` function follow the notation of dplyr's
@@ -58,14 +63,17 @@ the `row` or the `col`.
 For instance, we can use the `arrange` function to consecutively sort a data frame by rows. 
 In this case, we first arrange by gene_group and next by gene_name.
 ```{r}
-seq_se %>% arrange(row, gene_group, gene_name)
+seq_se_reordered <- seq_se %>% arrange(row, gene_name, gene_group)
+rowData(seq_se)
+rowData(seq_se_reordered)
 ```
 
 The extended sample_n and sample_frac functions filters n random rows/cols 
 or a random fraction of the rows/cols respectively
 ```{r}
-seq_se %>% sample_n(col, size = 4, replace = TRUE)
-seq_se %>% sample_frac(row, size = .5)
+seq_se %>% sample_n(col, size = 4, replace = TRUE) #note the change in dim
+
+seq_se %>% sample_frac(row, size = .5) #note the change in dim
 ```
 
 Lastly, mutate is normally used to add or change columns to a data frame based on 
@@ -73,9 +81,12 @@ existing columns. Again, the new variables can be added to the colData or the
 rowData of the SummarizedExperiment. If we for instance want to change the time 
 for the samples from hours to minutes, we can do
 ```{r}
-seq_se %>% mutate(col, time = (time * 60))
+seq_se_mins <- seq_se %>% mutate(col, time = (time * 60))
+seq_se$time
+seq_se_mins$time
 ```
 or to combine the gene groups and gene names to one new variable in the rowData
 ```{r}
-seq_se %>% mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
+seq_se_gene_comb <- seq_se %>% mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
+rowData(seq_se_gene_comb)$group_and_name
 ```

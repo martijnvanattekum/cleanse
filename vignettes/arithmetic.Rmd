@@ -24,13 +24,25 @@ be achieved with a combination of ```select``` and ```-```. Take into account th
 subtracted by position and we have to ensure that the columns match up. 
 The ```arrange``` function might be helpful to ensure this. (as shown below, not strictly
 necessary for the example se though)
-```{r}
+```{r message=FALSE}
 library(dplyr)
 library(SummarizedExperiment)
 library(cleanse)
+```
+```{r}
 seq_se_t0 <- seq_se %>% select(time == 0) %>% arrange(col, patient, site, treatment)
+assay(seq_se_t0)[1:5, 1:5]
 seq_se_t4 <- seq_se %>% select(time == 4) %>% arrange(col, patient, site, treatment)
+assay(seq_se_t4)[1:5, 1:5]
 seq_se_diff <- seq_se_t4 - seq_se_t0
+assay(seq_se_diff)[1:5, 1:5]
 ```
 Similarly, functions for ```+```, ```/```, and ```*```, can be used.
+
+In addition, a method to round the values from all assays is provided:
+```{r}
+seq_se_rounded <- seq_se %>% round(3)
+assay(seq_se)[1:5, 1:5]
+assay(seq_se_rounded)[1:5, 1:5]
+```
  

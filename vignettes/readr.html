@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martijn van Attekum" />
 
-<meta name="date" content="2019-06-09" />
+<meta name="date" content="2019-06-10" />
 
 <title>Writing SummarizedExperiments to a delimited text file</title>
 
@@ -303,17 +303,26 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Writing SummarizedExperiments to a delimited text file</h1>
 <h4 class="author">Martijn van Attekum</h4>
-<h4 class="date">2019-06-09</h4>
+<h4 class="date">2019-06-10</h4>
 
 
 
 <div id="section" class="section level2">
 <h2></h2>
-<p>Due to their unique ability to contain row- and colData, SummarizedExperiments (se’s) can not be written to a delimited file using functions such as write_csv. A set of functions is provided to mimic the write_<format> functions of readr. To write the example <code>seq_se</code> to a file, use</p>
+<p>Due to their unique ability to contain row- and colData, SummarizedExperiments (se’s) can not be written to a delimited file using functions such as write_csv. A set of functions is provided to mimic the write_<format> functions of readr. Currently, read_csv, read_tsv, and read_delim can be used. To round the example <code>seq_se</code> and write it to a csv file, use</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(DESeq2)</a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(cleanse)</a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">write_se_to_csv</span>(seq_se, <span class="st">&quot;expression&quot;</span>, <span class="st">&quot;out.csv&quot;</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(SummarizedExperiment)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(cleanse)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">3</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">write_csv</span>(<span class="st">&quot;expression&quot;</span>, <span class="st">&quot;out.csv&quot;</span>)</a></code></pre></div>
+<p>When not providing a folder, the output is written to the current working directory. The beginning of the out.csv file will look like:</p>
+<pre><code>EXPRESSION gene_group gene_name                            
+   patient                           1      2      3      4 ...
+      site                        skin   skin   skin   skin ...
+      time                           0      0      0      0 ...
+ treatment                           A      A      A      A ...
+                   IL     IL1R1 15.053  2.617 20.093 12.464 ...
+                   IL     IL1R2  4.876 16.154 19.834  6.419 ...
+                  ...       ...    ...    ...    ...    ... ...</code></pre>
 </div>
 
 

@@ -4,9 +4,11 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ------------------------------------------------------------------------
+## ----message=FALSE-------------------------------------------------------
 library(dplyr)
-library(DESeq2)
+library(SummarizedExperiment)
 library(cleanse)
-write_se_to_csv(seq_se, "expression", "out.csv")
+
+## ----eval=FALSE----------------------------------------------------------
+#  seq_se %>% round(3) %>% write_csv("expression", "out.csv")
 
