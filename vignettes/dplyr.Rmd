@@ -65,12 +65,12 @@ dim(sample_subset_se)
 and `rename` will rename these variables. This will not remove any of the experiment's assay values.
 ```{r}
 # remove the time variable after filtering for time == 0
-genes_subset_se <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
-print_options(genes_subset_se)  #note the time variable has disappeared from the colData
+seq_se_min_time <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
+print_options(seq_se_min_time)  #note the time variable has disappeared from the colData
 
 # rename the time variable after changing it to minutes
-seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
-print_options(genes_subset_se)  #note the time variable is now called time_mins
+seq_se_ren_time <- seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
+print_options(seq_se_ren_time)  #note the time variable is now called time_mins
 ```
 
 `arrange` is used to consecutively sort a data frame by a variable. In this case, 
