@@ -42,48 +42,52 @@ print_options(seq_se)
 As you can see, seq_se contains expression and copy_number data for samples taken from
 3 different sites, which were treated with either treatment A or B for 0 or 4 hours for 4
 different patients. The genes that were sequenced are from 3 different gene groups:
-IL, NOTCH, and TLR
+IL, NOTCH, and TLR. Each of the rowData / colData columns (eg patient, site, gene_group)
+is refered to as a **variable** henceforth.
 
 ## Using dplyr functions
-The `filter` and `select` functions from the dplyr package allow you to select rows and
-columns respectively from a data frame and have been designed such that they integrate
-into pipes. This functionalty has here been extended to the SummarizedExperiment.
-
+The `filter` function subsets rows / cols from the se based on conditional filtering
+of a variable contained in either rowData or colData respectively.
+Experiment values in the assay are dropped concurrently with the update of the colData/rowData.
 ```{r}
 genes_subset_se <- seq_se %>% filter(row, gene_group == "IL")
 print_options(genes_subset_se)  #note the change in available gene_groups
 
 sample_subset_se <- seq_se %>% filter(col, treatment == "B", site %in% c("brain", "skin"))
-print_options(sample_subset_se) #note the change in available treatment and site
+print_options(sample_subset_se) #note the change in available treatments and sites
 ```
 
-Note that the selection criteria for the `select` function follow the notation of dplyr's
-`mutate` function, where the variable names are based on the names from the se's attached colData.
+`select` can be used to select variables from the attached rowData or colData, 
+and `rename` will rename these variables. This will not remove any of the experiment's assay values.
+```{r}
+# remove the time variable after filtering for time == 0
+genes_subset_se <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
+print_options(genes_subset_se)  #note the time variable has disappeared from the colData
 
-The `arrange`, sample, and `mutate` function in dplyr act rowwise. As se's contain both row-
-and colData, an extra argument is now supplied to have the action performed on either
-the `row` or the `col`.
+# rename the time variable after changing it to minutes
+seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
+print_options(genes_subset_se)  #note the time variable is now called time_mins
+```
 
-For instance, we can use the `arrange` function to consecutively sort a data frame by rows. 
-In this case, we first arrange by gene_group and next by gene_name.
+`arrange` is used to consecutively sort a data frame by a variable. In this case, 
+we arrange the rows, first by gene_name and next by gene_group.
 ```{r}
 seq_se_reordered <- seq_se %>% arrange(row, gene_name, gene_group)
 rowData(seq_se)
 rowData(seq_se_reordered)
 ```
 
-The extended sample_n and sample_frac functions filters n random rows/cols 
-or a random fraction of the rows/cols respectively
+The extended `sample_n` and `sample_frac` functions filter n random rows/cols 
+or a random fraction respectively
 ```{r}
 seq_se %>% sample_n(col, size = 4, replace = TRUE) #note the change in dim
 
 seq_se %>% sample_frac(row, size = .5) #note the change in dim
 ```
 
-Lastly, mutate is normally used to add or change columns to a data frame based on 
-existing columns. Again, the new variables can be added to the colData or the 
-rowData of the SummarizedExperiment. If we for instance want to change the time 
-for the samples from hours to minutes, we can do
+Lastly, `mutate` adds or changes variables from the rowData / colData.  
+If we for instance want to change the time for the samples from hours to minutes, 
+we can do
 ```{r}
 seq_se_mins <- seq_se %>% mutate(col, time = (time * 60))
 seq_se$time
