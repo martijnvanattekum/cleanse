@@ -54,13 +54,15 @@ as.char.df <- function(.data) {
 }
 
 #returns a writable df based on each assay in the se
-get_delim_df <- function(se, assayname) {
+get_delim_df <- function(se, assay_name = NULL) {
 
   coldt <- SummarizedExperiment::colData(se) %>% as.char.df()
   rowdt <- SummarizedExperiment::rowData(se) %>% as.char.df()
-  assay <- SummarizedExperiment::assays(se)[[assayname]] %>% as.char.df()
+  assay <- SummarizedExperiment::assays(se)[[assay_name]] %>% as.char.df() %>% 
+    `colnames<-`(paste0("X", 1:ncol(.))) %>% #conforms with names from the header df
+    `rownames<-`(NULL)
   
-  leftcol <- data.frame(col0 = c(toupper(assayname), names(coldt), rep("", nrow(assay))))
+  leftcol <- data.frame(col0 = c(toupper(assay_name), names(coldt), rep("", nrow(assay))))
   middlecols <- data.frame(lapply(names(rowdt), function(name)
     c(name, rep("", ncol(coldt)), rowdt[[name]]))) %>% 
     `colnames<-`(paste0("col", 1:ncol(rowdt)))

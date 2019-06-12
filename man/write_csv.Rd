@@ -4,21 +4,22 @@
 \alias{write_csv}
 \title{Write a se to csv format}
 \usage{
-write_csv(se, assayname, path)
+write_csv(se, path, assay_name = NULL)
 
-write_csv(se, assayname, path)
+write_csv(se, path, assay_name = NULL)
 }
 \arguments{
 \item{se}{SummarizedExperiment to round}
 
-\item{assayname}{Name of the assay contained in se to write}
-
 \item{path}{Path or connection to write to}
+
+\item{assay_name}{Name of the assay contained in se to write. Not required when 
+only 1 assay is contained in the se}
 }
 \description{
 Rounds the values in all of the underlying assay matrices to the given number of digits
 }
 \examples{
 # write the example se to csv
-seq_se \%>\% round(3) \%>\% write_csv("expression", "out.csv")
+seq_se \%>\% round(3) \%>\% write_csv("out.csv", "expression")
 }

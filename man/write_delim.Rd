@@ -4,23 +4,24 @@
 \alias{write_delim}
 \title{Write a se to delim format}
 \usage{
-write_delim(se, assayname, path, delim = " ")
+write_delim(se, path, delim = " ", assay_name = NULL)
 
-write_delim(se, assayname, path, delim = " ")
+write_delim(se, path, delim = " ", assay_name = NULL)
 }
 \arguments{
 \item{se}{SummarizedExperiment to round}
 
-\item{assayname}{Name of the assay contained in se to write}
-
 \item{path}{Path or connection to write to}
 
 \item{delim}{Delimiter used to separate values}
+
+\item{assay_name}{Name of the assay contained in se to write. Not required when 
+only 1 assay is contained in the se}
 }
 \description{
 Rounds the values in all of the underlying assay matrices to the given number of digits
 }
 \examples{
 # write the example se to delim file, defaulting to " " as delimiter
-seq_se \%>\% round(3) \%>\% write_delim("expression", "out.txt")
+seq_se \%>\% round(3) \%>\% write_delim("out.txt", assay_name = "expression")
 }
