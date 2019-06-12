@@ -7,14 +7,16 @@
 \method{/}{SummarizedExperiment}(se1, se2)
 }
 \arguments{
-\item{se1, se2}{SummarizedExperiments for which se1 will be divided by se2}
+\item{se1, se2}{SummarizedExperiments for which se1 values will be divided by se2 values.
+Need to have the same rowData and colData}
 }
 \description{
-For 2 equal sized se's containing the same assays, divides the values from
-each of the underlying assay values. The returned se is of the same size, and contains
-the row and column data from the original first se argument.
+Divides the values from each of the underlying assay values for 2 se's.
 }
 \examples{
-#create subset dfs of time == 0 and 4h, and divide their values
-(select(seq_se, time == 0)) / (select(seq_se, time == 04))
+#create subset se's for time == 0 and time == 4. Then subtract their values.
+#remove time to make colData the same
+t0 <- seq_se \%>\% filter(col, time == 0) \%>\% select(col, -time)
+t4 <- seq_se \%>\% filter(col, time == 4) \%>\% select(col, -time)
+t4 / t0
 }

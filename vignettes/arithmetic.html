@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martijn van Attekum" />
 
-<meta name="date" content="2019-06-10" />
+<meta name="date" content="2019-06-12" />
 
 <title>Arithmetic operations on SummarizedExperiments</title>
 
@@ -303,39 +303,48 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Arithmetic operations on SummarizedExperiments</h1>
 <h4 class="author">Martijn van Attekum</h4>
-<h4 class="date">2019-06-10</h4>
+<h4 class="date">2019-06-12</h4>
 
 
 
 <p>Occasionally, we want to perform arithmetic operations on the values contained in 2 se’s, for instance when subtracting control values from treated values.</p>
-<p>If we want to subtract the values from T=0 from the values at T=4, this can be achieved with a combination of <code>select</code> and <code>-</code>. Take into account that columns are subtracted by position and we have to ensure that the columns match up. The <code>arrange</code> function might be helpful to ensure this. (as shown below, not strictly necessary for the example se though)</p>
+<p>If we want to subtract the values from time == 0 from the values at time == 4, this can be achieved with a combination of <code>filter</code> and <code>-</code>.<br />
+Arithmetic operations require the se’s to have the same ColData and rowData. To ensure the colData is the same, we have to:</p>
+<ul>
+<li>remove the time information from colData using the <code>select</code> function</li>
+<li>rearrange the data by patient, then site, then treatment (although not strictly necessary for the example se)</li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dplyr)</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(SummarizedExperiment)</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(cleanse)</a></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">seq_se_t0 &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(time <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(col, patient, site, treatment)</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">assay</span>(seq_se_t0)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]     [,5]</span></a>
-<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt; [1,] 15.052851 11.881988 22.881547 11.467049 16.03225</span></a>
-<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; [2,]  4.876098  2.404972 11.435766 19.046400 22.25672</span></a>
-<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; [3,] 24.161468 15.832220 23.026848 12.159250 19.11502</span></a>
-<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; [4,] 16.272638 16.660169  6.477970 18.317787 20.86950</span></a>
-<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; [5,]  9.176797 10.141590  8.594452  0.199231 24.83814</span></a>
-<a class="sourceLine" id="cb2-9" title="9">seq_se_t4 &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(time <span class="op">==</span><span class="st"> </span><span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(col, patient, site, treatment)</a>
-<a class="sourceLine" id="cb2-10" title="10"><span class="kw">assay</span>(seq_se_t4)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt;           [,1]      [,2]     [,3]      [,4]      [,5]</span></a>
-<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt; [1,] 15.434449 16.029647 12.53175 19.837960 12.100908</span></a>
-<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt; [2,]  7.499163 21.517809 17.43825  2.720085 17.485132</span></a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt; [3,]  8.361128 21.121566 24.75573 11.890398 12.204261</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt; [4,]  3.097969  5.679155 19.56254 23.681155 18.924928</span></a>
-<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt; [5,]  6.946594 19.079302 14.03247 17.526090  2.837707</span></a>
-<a class="sourceLine" id="cb2-17" title="17">seq_se_diff &lt;-<span class="st"> </span>seq_se_t4 <span class="op">-</span><span class="st"> </span>seq_se_t0</a>
-<a class="sourceLine" id="cb2-18" title="18"><span class="kw">assay</span>(seq_se_diff)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb2-19" title="19"><span class="co">#&gt;             [,1]       [,2]       [,3]        [,4]       [,5]</span></a>
-<a class="sourceLine" id="cb2-20" title="20"><span class="co">#&gt; [1,]   0.3815981   4.147659 -10.349801   8.3709113  -3.931341</span></a>
-<a class="sourceLine" id="cb2-21" title="21"><span class="co">#&gt; [2,]   2.6230645  19.112837   6.002484 -16.3263145  -4.771592</span></a>
-<a class="sourceLine" id="cb2-22" title="22"><span class="co">#&gt; [3,] -15.8003400   5.289347   1.728882  -0.2688523  -6.910758</span></a>
-<a class="sourceLine" id="cb2-23" title="23"><span class="co">#&gt; [4,] -13.1746691 -10.981014  13.084575   5.3633683  -1.944574</span></a>
-<a class="sourceLine" id="cb2-24" title="24"><span class="co">#&gt; [5,]  -2.2302034   8.937712   5.438022  17.3268594 -22.000435</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">seq_se_t0 &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(col, time <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="st">  </span><span class="kw">select</span>(col, <span class="op">-</span>time) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="st">  </span><span class="kw">arrange</span>(col, patient, site, treatment)</a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="kw">assay</span>(seq_se_t0)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]     [,5]</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; [1,] 15.052851 11.881988 22.881547 11.467049 16.03225</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; [2,]  4.876098  2.404972 11.435766 19.046400 22.25672</span></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; [3,] 24.161468 15.832220 23.026848 12.159250 19.11502</span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; [4,] 16.272638 16.660169  6.477970 18.317787 20.86950</span></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt; [5,]  9.176797 10.141590  8.594452  0.199231 24.83814</span></a>
+<a class="sourceLine" id="cb2-11" title="11">seq_se_t4 &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(col, time <span class="op">==</span><span class="st"> </span><span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-12" title="12"><span class="st">  </span><span class="kw">select</span>(col, <span class="op">-</span>time) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="st">  </span><span class="kw">arrange</span>(col, patient, site, treatment)</a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="kw">assay</span>(seq_se_t4)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
+<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt;           [,1]      [,2]     [,3]      [,4]      [,5]</span></a>
+<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt; [1,] 15.434449 16.029647 12.53175 19.837960 12.100908</span></a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="co">#&gt; [2,]  7.499163 21.517809 17.43825  2.720085 17.485132</span></a>
+<a class="sourceLine" id="cb2-18" title="18"><span class="co">#&gt; [3,]  8.361128 21.121566 24.75573 11.890398 12.204261</span></a>
+<a class="sourceLine" id="cb2-19" title="19"><span class="co">#&gt; [4,]  3.097969  5.679155 19.56254 23.681155 18.924928</span></a>
+<a class="sourceLine" id="cb2-20" title="20"><span class="co">#&gt; [5,]  6.946594 19.079302 14.03247 17.526090  2.837707</span></a>
+<a class="sourceLine" id="cb2-21" title="21">seq_se_diff &lt;-<span class="st"> </span>seq_se_t4 <span class="op">-</span><span class="st"> </span>seq_se_t0</a>
+<a class="sourceLine" id="cb2-22" title="22"><span class="kw">assay</span>(seq_se_diff)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
+<a class="sourceLine" id="cb2-23" title="23"><span class="co">#&gt;             [,1]       [,2]       [,3]        [,4]       [,5]</span></a>
+<a class="sourceLine" id="cb2-24" title="24"><span class="co">#&gt; [1,]   0.3815981   4.147659 -10.349801   8.3709113  -3.931341</span></a>
+<a class="sourceLine" id="cb2-25" title="25"><span class="co">#&gt; [2,]   2.6230645  19.112837   6.002484 -16.3263145  -4.771592</span></a>
+<a class="sourceLine" id="cb2-26" title="26"><span class="co">#&gt; [3,] -15.8003400   5.289347   1.728882  -0.2688523  -6.910758</span></a>
+<a class="sourceLine" id="cb2-27" title="27"><span class="co">#&gt; [4,] -13.1746691 -10.981014  13.084575   5.3633683  -1.944574</span></a>
+<a class="sourceLine" id="cb2-28" title="28"><span class="co">#&gt; [5,]  -2.2302034   8.937712   5.438022  17.3268594 -22.000435</span></a></code></pre></div>
 <p>Similarly, functions for <code>+</code>, <code>/</code>, and <code>*</code>, can be used.</p>
 <p>In addition, a method to round the values from all assays is provided:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">seq_se_rounded &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">3</span>)</a>

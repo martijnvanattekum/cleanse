@@ -5,45 +5,84 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 ###################### dplyr functions ##############################
 #####################################################################
 
-#' Returns row of se with matching conditions
+#' Returns rows or cols of se with matching conditions
 #' 
 #' Use filter() to choose rows/genes where conditions are true. Uses attached rowData
 #' to find matches. 
 #' @param se SummarizedExperiment to subset
+#' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... Logical predicates defined in terms of the variables in .data. 
 #' Multiple conditions are combined with & or ,. Only rows where the condition evaluates to TRUE are kept.
 #' @examples
 #' #filter the rows of the example se with genes from the IL group
-#' seq_se %>% filter(gene_group == "IL")
+#' seq_se %>% filter(row, gene_group == "IL")
 #' @export
-filter <- function(se, ...){UseMethod("filter")}
+filter <- function(se, axis, ...){UseMethod("filter")}
 
 #' @rdname filter 
 #' @export
-filter.SummarizedExperiment <- function(se, ...){
-  se[getidx(SummarizedExperiment::rowData(se), dplyr::filter, ...), ]
+filter.SummarizedExperiment <- function(se, axis, ...){
+  axis <- deparse(substitute(axis))
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
+  if (axis == "row") return(se[getidx(SummarizedExperiment::rowData(se), dplyr::filter, ...), ])
+  se[, getidx(SummarizedExperiment::colData(se), dplyr::filter, ...)]
 }
 
-#' Returns columns of se with matching conditions
+#' Select variables by name for rowData or colData
 #' 
-#' Use select() to choose columns/samples where conditions are true. Uses attached colData
-#' to find matches. Note that dplyr's filter syntax is used.
+#' Choose variables from the rowData or colData that you want to keep. Select drops all other variables.
 #' @param se SummarizedExperiment to subset
-#' @param ... Logical predicates defined in terms of the variables in .data. 
-#' Multiple conditions are combined with & or ,. Only columns where the condition 
-#' evaluates to TRUE are kept.
+#' @param axis The axis to perform the operation on. Either row or col.
+#' @param ... One or more unquoted expressions separated by commas. You can treat variable names like they are positions, so you can use expressions like x:y to select ranges of variables.
+#' Positive values select variables; negative values drop variables. If the first expression is negative, select() will automatically start with all variables.  
+#' 
+#' Use named arguments, e.g. new_name = old_name, to rename selected variables.  
+#' 
+#' The arguments in ... are automatically quoted and evaluated in a context where column names represent column positions. They also support unquoting and splicing. See vignette("programming") for an introduction to these concepts.  
+#' 
+#' See select helpers for more details and examples about tidyselect helpers such as starts_with(), everything(), ...
 #' @examples
-#' #select the columns/samples of patient 1
-#' seq_se %>% select(patient == 1)
-#' #select the columns/samples where treatment is B and the site is either brain or skin
-#' #' seq_se %>% select(treatment == "B", site %in% c("brain", "skin"))
+#' # remove the time variable after filtering for time == 0
+#' seq_se %>% filter(col, time == 0) %>% select(col, -time)
 #' @export
-select <- function(se, ...){UseMethod("select")}
+select <- function(se, axis, ...){UseMethod("select")}
 
 #' @rdname select 
 #' @export
-select.SummarizedExperiment <- function(se, ...){
-  se[, getidx(SummarizedExperiment::colData(se), dplyr::filter, ...)]
+select.SummarizedExperiment <- function(se, axis, ...){
+  axis <- deparse(substitute(axis))
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
+  if (axis == "row") return(update_se(se, rowData = dplyr::select(as.data.frame(SummarizedExperiment::rowData(se)), ...)))
+  update_se(se, colData = dplyr::select(as.data.frame(SummarizedExperiment::colData(se)), ...))
+} 
+
+#' Rename variables by name for rowData or colData
+#' 
+#' Choose variables from the rowData or colData that you want to rename. Rename keeps all other variables.
+#' @param se SummarizedExperiment to subset
+#' @param axis The axis to perform the operation on. Either row or col.
+#' @param ... One or more unquoted expressions separated by commas. You can treat variable names like they are positions, so you can use expressions like x:y to select ranges of variables.
+#' 
+#' Positive values select variables; negative values drop variables. If the first expression is negative, select() will automatically start with all variables.  
+#' 
+#' Use named arguments, e.g. new_name = old_name, to rename selected variables.  
+#' 
+#' The arguments in ... are automatically quoted and evaluated in a context where column names represent column positions. They also support unquoting and splicing. See vignette("programming") for an introduction to these concepts. 
+#'  
+#' See select helpers for more details and examples about tidyselect helpers such as starts_with(), everything(), ...
+#' @examples
+#' # rename the time variable after changing it to minutes
+#' seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
+#' @export
+rename <- function(se, axis, ...){UseMethod("rename")}
+
+#' @rdname rename 
+#' @export
+rename.SummarizedExperiment <- function(se, axis, ...){
+  axis <- deparse(substitute(axis))
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
+  if (axis == "row") return(update_se(se, rowData = dplyr::rename(as.data.frame(SummarizedExperiment::rowData(se)), ...)))
+  update_se(se, colData = dplyr::rename(as.data.frame(SummarizedExperiment::colData(se)), ...))
 } 
 
 #' Arrange by variables
@@ -64,7 +103,7 @@ arrange <- function(se, axis, ...){UseMethod("arrange")}
 #' @export
 arrange.SummarizedExperiment <- function(se, axis, ...){
   axis <- deparse(substitute(axis))
-  axis <- match.arg(axis, c("col", "row"))
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
   if (axis == "row") return(se[getidx(SummarizedExperiment::rowData(se), dplyr::arrange, ...),])
   se[, getidx(SummarizedExperiment::colData(se), dplyr::arrange, ...)]
 }
@@ -85,7 +124,7 @@ sample_n <- function(se, axis, ...){UseMethod("sample_n")}
 #' @export
 sample_n.SummarizedExperiment <- function(se, axis, ...){
   axis <- deparse(substitute(axis))
-  axis <- match.arg(axis, c("col", "row"))
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
   if (axis == "row") return(se[getidx(SummarizedExperiment::rowData(se), dplyr::sample_n, ...),])
   se[,getidx(SummarizedExperiment::colData(se), dplyr::sample_n, ...)]
 }
@@ -106,7 +145,7 @@ sample_frac <- function(se, axis,...){UseMethod("sample_frac")}
 #' @export
 sample_frac.SummarizedExperiment <- function(se, axis, ...){
   axis <- deparse(substitute(axis))
-  axis <- match.arg(axis, c("col", "row"))
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
   if (axis == "row") return(se[getidx(SummarizedExperiment::rowData(se), dplyr::sample_frac, ...),])
   se[,getidx(SummarizedExperiment::colData(se), dplyr::sample_frac, ...)]
 }
@@ -135,7 +174,7 @@ mutate <- function(se, axis, ...){UseMethod("mutate")}
 #' @export
 mutate.SummarizedExperiment <- function(se, axis, ...){
   axis <- deparse(substitute(axis))
-  axis <- match.arg(axis, c("col", "row"))
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
   if (axis == "row") return(update_se(se, rowData = dplyr::mutate(as.data.frame(SummarizedExperiment::rowData(se)), ...)))
   update_se(se, colData = dplyr::mutate(as.data.frame(SummarizedExperiment::colData(se)), ...))
 }
@@ -146,13 +185,15 @@ mutate.SummarizedExperiment <- function(se, axis, ...){
 
 #' Subtract two SummarizedExperiments
 #' 
-#' For 2 equal sized se's containing the same assays, subtracts the values from
-#' each of the underlying assay values. The returned se is of the same size, and contains
-#' the row and column data from the original first se argument.
-#' @param se1,se2 SummarizedExperiments for which se2 will be subtracted from se1
+#' Subtracts the values from each of the underlying assay values for 2 se's. 
+#' @param se1,se2 SummarizedExperiments for which se2 values will be subtracted from se1 values.
+#' Need to have the same rowData and colData
 #' @examples
-#' #create subset dfs of time == 0 and 4h, and subtract their values
-#' (select(seq_se, time == 0)) - (select(seq_se, time == 04))
+#' #create subset se's for time == 0 and time == 4. Then subtract their values.
+#' #remove time to make colData the same
+#' t0 <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
+#' t4 <- seq_se %>% filter(col, time == 4) %>% select(col, -time)
+#' t4 - t0
 #' @export
 `-.SummarizedExperiment` <- function(se1, se2){
   arith_se(se1, se2, `-`)
@@ -160,13 +201,15 @@ mutate.SummarizedExperiment <- function(se, axis, ...){
 
 #' Add two SummarizedExperiments
 #' 
-#' For 2 equal sized se's containing the same assays, adds the values from
-#' each of the underlying assay values. The returned se is of the same size, and contains
-#' the row and column data from the original first se argument.
-#' @param se1,se2 SummarizedExperiments to add
+#' Adds the values from each of the underlying assay values for 2 se's. 
+#' @param se1,se2 SummarizedExperiments for which se1 and se2 values will be added
+#' Need to have the same rowData and colData
 #' @examples
-#' #create subset dfs of time == 0 and 4h, and add their values
-#' (select(seq_se, time == 0)) + (select(seq_se, time == 04))
+#' #create subset se's for time == 0 and time == 4. Then add their values.
+#' #remove time to make colData the same
+#' t0 <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
+#' t4 <- seq_se %>% filter(col, time == 4) %>% select(col, -time)
+#' t4 + t0
 #' @export
 `+.SummarizedExperiment` <- function(se1, se2){
   arith_se(se1, se2, `+`)
@@ -174,13 +217,15 @@ mutate.SummarizedExperiment <- function(se, axis, ...){
 
 #' Divide two SummarizedExperiments
 #' 
-#' For 2 equal sized se's containing the same assays, divides the values from
-#' each of the underlying assay values. The returned se is of the same size, and contains
-#' the row and column data from the original first se argument.
-#' @param se1,se2 SummarizedExperiments for which se1 will be divided by se2
+#' Divides the values from each of the underlying assay values for 2 se's. 
+#' @param se1,se2 SummarizedExperiments for which se1 values will be divided by se2 values.
+#' Need to have the same rowData and colData
 #' @examples
-#' #create subset dfs of time == 0 and 4h, and divide their values
-#' (select(seq_se, time == 0)) / (select(seq_se, time == 04))
+#' #create subset se's for time == 0 and time == 4. Then subtract their values.
+#' #remove time to make colData the same
+#' t0 <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
+#' t4 <- seq_se %>% filter(col, time == 4) %>% select(col, -time)
+#' t4 / t0
 #' @export
 `/.SummarizedExperiment` <- function(se1, se2){
   arith_se(se1, se2, `/`)
@@ -188,13 +233,15 @@ mutate.SummarizedExperiment <- function(se, axis, ...){
 
 #' Multiply two SummarizedExperiments
 #' 
-#' For 2 equal sized se's containing the same assays, multiplies the values from
-#' each of the underlying assay values. The returned se is of the same size, and contains
-#' the row and column data from the original first se argument.
-#' @param se1,se2 SummarizedExperiments to multiply
+#' Multiplies the values from each of the underlying assay values for 2 se's. 
+#' @param se1,se2 SummarizedExperiments for which se1 and se2 values will be multiplied.
+#' Need to have the same rowData and colData
 #' @examples
-#' #create subset dfs of time == 0 and 4h, and multiply their values
-#' (select(seq_se, time == 0)) * (select(seq_se, time == 04))
+#' #create subset se's for time == 0 and time == 4. Then add their values.
+#' #remove time to make colData the same
+#' t0 <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
+#' t4 <- seq_se %>% filter(col, time == 4) %>% select(col, -time)
+#' t4 * t0
 #' @export
 `*.SummarizedExperiment` <- function(se1, se2){
   arith_se(se1, se2, `*`)

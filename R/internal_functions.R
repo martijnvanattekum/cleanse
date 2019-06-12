@@ -27,7 +27,8 @@ getidx <- function(.data, fun, ...){
 #perform arithmic to 2 equal-sized se's
 arith_se <- function(se1, se2, fun) {
   if (!identical(SummarizedExperiment::assayNames(se1), SummarizedExperiment::assayNames(se2)))stop("Assay names of se1 and se2 need to be the same to proceed")
-  if (!identical(dim(se1), dim(se2)))stop("The dimensions of se1 and se2 need to be the same to proceed")
+  if (!identical(SummarizedExperiment::colData(se1), SummarizedExperiment::colData(se2)))stop("The colData of se1 and se2 need to be the same to proceed") 
+  if (!identical(SummarizedExperiment::rowData(se1), SummarizedExperiment::rowData(se2)))stop("The rowData of se1 and se2 need to be the same to proceed") 
   assays <- lapply(SummarizedExperiment::assayNames(se1), 
                    function(name) fun(SummarizedExperiment::assays(se1)[[name]], 
                                       SummarizedExperiment::assays(se2)[[name]])) %>% 

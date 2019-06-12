@@ -13,10 +13,10 @@ library(cleanse)
 print_options(seq_se)
 
 ## ------------------------------------------------------------------------
-genes_subset_se <- seq_se %>% filter(gene_group == "IL")
+genes_subset_se <- seq_se %>% filter(row, gene_group == "IL")
 print_options(genes_subset_se)  #note the change in available gene_groups
 
-sample_subset_se <- seq_se %>% select(treatment == "B", site %in% c("brain", "skin"))
+sample_subset_se <- seq_se %>% filter(col, treatment == "B", site %in% c("brain", "skin"))
 print_options(sample_subset_se) #note the change in available treatment and site
 
 ## ------------------------------------------------------------------------
@@ -35,6 +35,7 @@ seq_se$time
 seq_se_mins$time
 
 ## ------------------------------------------------------------------------
-seq_se_gene_comb <- seq_se %>% mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
+seq_se_gene_comb <- seq_se %>% 
+  mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
 rowData(seq_se_gene_comb)$group_and_name
 

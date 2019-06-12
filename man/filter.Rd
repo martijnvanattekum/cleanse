@@ -3,14 +3,16 @@
 \name{filter}
 \alias{filter}
 \alias{filter.SummarizedExperiment}
-\title{Returns row of se with matching conditions}
+\title{Returns rows or cols of se with matching conditions}
 \usage{
-filter(se, ...)
+filter(se, axis, ...)
 
-\method{filter}{SummarizedExperiment}(se, ...)
+\method{filter}{SummarizedExperiment}(se, axis, ...)
 }
 \arguments{
 \item{se}{SummarizedExperiment to subset}
+
+\item{axis}{The axis to perform the operation on. Either row or col.}
 
 \item{...}{Logical predicates defined in terms of the variables in .data. 
 Multiple conditions are combined with & or ,. Only rows where the condition evaluates to TRUE are kept.}
@@ -21,5 +23,5 @@ to find matches.
 }
 \examples{
 #filter the rows of the example se with genes from the IL group
-seq_se \%>\% filter(gene_group == "IL")
+seq_se \%>\% filter(row, gene_group == "IL")
 }

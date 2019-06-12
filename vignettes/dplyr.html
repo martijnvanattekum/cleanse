@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martijn van Attekum" />
 
-<meta name="date" content="2019-06-10" />
+<meta name="date" content="2019-06-12" />
 
 <title>Manipulating SummarizedExperiments with dplyr functions</title>
 
@@ -303,11 +303,12 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Manipulating SummarizedExperiments with dplyr functions</h1>
 <h4 class="author">Martijn van Attekum</h4>
-<h4 class="date">2019-06-10</h4>
+<h4 class="date">2019-06-12</h4>
 
 
 
 <p>The SummarizedExperiment (se) class offers a useful way to store multiple row and column data along with the values from an experiment and is widely used in computational biology. Although subsetting se’s is possible with base R notation (ie using <code>[]</code>), se’s lack methods for dplyr functions such as <code>filter</code> and <code>select</code>, which excludes se’s from easily being used in pipes. This package offers methods for the dplyr functions and will automatically dispatch your se to the relevant function.</p>
+<p>As se’s contain a data frame for both the rowData and colData, a major difference using these functions in cleanse, is that we need to <strong>specify whether we apply our function to the row or the col</strong> of the se. Cleanse will then take care of updating the se.</p>
 <p>The package contains an example se called <code>seq_se</code>. The example contains dummy data of expression and copy number values for 10 genes and 48 different conditions. To get an overview of the different options available in the se, use print_options:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dplyr)</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(SummarizedExperiment)</a>
@@ -329,7 +330,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="using-dplyr-functions" class="section level2">
 <h2>Using dplyr functions</h2>
 <p>The <code>filter</code> and <code>select</code> functions from the dplyr package allow you to select rows and columns respectively from a data frame and have been designed such that they integrate into pipes. This functionalty has here been extended to the SummarizedExperiment.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">genes_subset_se &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(gene_group <span class="op">==</span><span class="st"> &quot;IL&quot;</span>)</a>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">genes_subset_se &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(row, gene_group <span class="op">==</span><span class="st"> &quot;IL&quot;</span>)</a>
 <a class="sourceLine" id="cb3-2" title="2"><span class="kw">print_options</span>(genes_subset_se)  <span class="co">#note the change in available gene_groups</span></a>
 <a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt; ** ASSAY OPTIONS FOR genes_subset_se ** </span></a>
 <a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt; expression, copy_number</span></a>
@@ -344,7 +345,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb3-13" title="13"><span class="co">#&gt; gene_group : IL </span></a>
 <a class="sourceLine" id="cb3-14" title="14"><span class="co">#&gt;  gene_name : IL1R1, IL1R2, IL2RA, IL2RB, IL2RG</span></a>
 <a class="sourceLine" id="cb3-15" title="15"></a>
-<a class="sourceLine" id="cb3-16" title="16">sample_subset_se &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(treatment <span class="op">==</span><span class="st"> &quot;B&quot;</span>, site <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;brain&quot;</span>, <span class="st">&quot;skin&quot;</span>))</a>
+<a class="sourceLine" id="cb3-16" title="16">sample_subset_se &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(col, treatment <span class="op">==</span><span class="st"> &quot;B&quot;</span>, site <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;brain&quot;</span>, <span class="st">&quot;skin&quot;</span>))</a>
 <a class="sourceLine" id="cb3-17" title="17"><span class="kw">print_options</span>(sample_subset_se) <span class="co">#note the change in available treatment and site</span></a>
 <a class="sourceLine" id="cb3-18" title="18"><span class="co">#&gt; ** ASSAY OPTIONS FOR sample_subset_se ** </span></a>
 <a class="sourceLine" id="cb3-19" title="19"><span class="co">#&gt; expression, copy_number</span></a>
@@ -420,10 +421,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt; [18] 240 240 240 240 240 240 240   0   0   0   0   0   0   0   0   0   0</span></a>
 <a class="sourceLine" id="cb6-8" title="8"><span class="co">#&gt; [35]   0   0 240 240 240 240 240 240 240 240 240 240 240 240</span></a></code></pre></div>
 <p>or to combine the gene groups and gene names to one new variable in the rowData</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">seq_se_gene_comb &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(row, <span class="dt">group_and_name =</span> <span class="kw">paste</span>(gene_group, gene_name, <span class="dt">sep =</span> <span class="st">&quot;_&quot;</span>))</a>
-<a class="sourceLine" id="cb7-2" title="2"><span class="kw">rowData</span>(seq_se_gene_comb)<span class="op">$</span>group_and_name</a>
-<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt;  [1] &quot;IL_IL1R1&quot;   &quot;IL_IL1R2&quot;   &quot;IL_IL2RA&quot;   &quot;IL_IL2RB&quot;   &quot;IL_IL2RG&quot;  </span></a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt;  [6] &quot;NOTCH_DLL1&quot; &quot;NOTCH_DLL3&quot; &quot;NOTCH_JAG1&quot; &quot;TLR_TLR1&quot;   &quot;TLR_TLR2&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">seq_se_gene_comb &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(row, <span class="dt">group_and_name =</span> <span class="kw">paste</span>(gene_group, gene_name, <span class="dt">sep =</span> <span class="st">&quot;_&quot;</span>))</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="kw">rowData</span>(seq_se_gene_comb)<span class="op">$</span>group_and_name</a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt;  [1] &quot;IL_IL1R1&quot;   &quot;IL_IL1R2&quot;   &quot;IL_IL2RA&quot;   &quot;IL_IL2RB&quot;   &quot;IL_IL2RG&quot;  </span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt;  [6] &quot;NOTCH_DLL1&quot; &quot;NOTCH_DLL3&quot; &quot;NOTCH_JAG1&quot; &quot;TLR_TLR1&quot;   &quot;TLR_TLR2&quot;</span></a></code></pre></div>
 </div>
 
 

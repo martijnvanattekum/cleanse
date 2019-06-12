@@ -23,6 +23,10 @@ for dplyr functions such as `filter` and `select`, which excludes se's from easi
 This package offers methods for the dplyr functions and will automatically dispatch
 your se to the relevant function.
 
+As se's contain a data frame for both the rowData and colData, a major difference using
+these functions in cleanse, is that we need to **specify whether we apply our function to
+the row or the col** of the se. Cleanse will then take care of updating the se.
+
 The package contains an example se called `seq_se`. The example contains
 dummy data of expression and copy number values for 10 genes and 48 different conditions.
 To get an overview of the different options available in the se, use print_options:
@@ -46,10 +50,10 @@ columns respectively from a data frame and have been designed such that they int
 into pipes. This functionalty has here been extended to the SummarizedExperiment.
 
 ```{r}
-genes_subset_se <- seq_se %>% filter(gene_group == "IL")
+genes_subset_se <- seq_se %>% filter(row, gene_group == "IL")
 print_options(genes_subset_se)  #note the change in available gene_groups
 
-sample_subset_se <- seq_se %>% select(treatment == "B", site %in% c("brain", "skin"))
+sample_subset_se <- seq_se %>% filter(col, treatment == "B", site %in% c("brain", "skin"))
 print_options(sample_subset_se) #note the change in available treatment and site
 ```
 
@@ -87,6 +91,7 @@ seq_se_mins$time
 ```
 or to combine the gene groups and gene names to one new variable in the rowData
 ```{r}
-seq_se_gene_comb <- seq_se %>% mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
+seq_se_gene_comb <- seq_se %>% 
+  mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
 rowData(seq_se_gene_comb)$group_and_name
 ```
