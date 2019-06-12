@@ -52,9 +52,13 @@ Experiment values in the assay are dropped concurrently with the update of the c
 ```{r}
 genes_subset_se <- seq_se %>% filter(row, gene_group == "IL")
 print_options(genes_subset_se)  #note the change in available gene_groups
+dim(seq_se)
+dim(genes_subset_se)
 
 sample_subset_se <- seq_se %>% filter(col, treatment == "B", site %in% c("brain", "skin"))
 print_options(sample_subset_se) #note the change in available treatments and sites
+dim(seq_se)
+dim(sample_subset_se)
 ```
 
 `select` can be used to select variables from the attached rowData or colData, 
