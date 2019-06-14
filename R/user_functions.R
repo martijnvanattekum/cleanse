@@ -25,6 +25,30 @@ filter.SummarizedExperiment <- function(se, axis, ...){
   subset_se(se, deparse(substitute(axis)), dplyr::filter, ...)
 }
 
+#' Choose rows by position
+#' 
+#' Choose rows by their ordinal position in the se
+#' @param se SummarizedExperiment to subset
+#' @param axis The axis to perform the operation on. Either row or col.
+#' @param ... Integer row values. Provide either positive values to keep, or 
+#' negative values to drop. The values provided must be either all positive or all 
+#' negative. Indices beyond the number of rows in the input are silently ignored.
+#'
+#' The arguments in ... are automatically quoted and evaluated in the context of 
+#' the data frame. They support unquoting and splicing. See vignette("programming") 
+#' for an introduction to these concepts.
+#' @examples
+#' #subset the first 10 cols of the se
+#' seq_se %>% slice(col, 1:10)
+#' @export
+slice <- function(se, axis, ...){UseMethod("slice")}
+
+#' @rdname slice 
+#' @export
+slice.SummarizedExperiment <- function(se, axis, ...){
+  subset_se(se, deparse(substitute(axis)), dplyr::slice, ...)
+}
+
 #' Arrange by variables
 #' 
 #' Order either rows or cols from se by an expression involving its variables.
@@ -324,4 +348,23 @@ write_delim <- function(se, path, delim = " ", assay_name = NULL){
     assay_name <- SummarizedExperiment::assayNames(se)[[1]]}
   if (!assay_name %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay '", assay_name, "' does not exist in the supplied se."))
   readr::write_delim(get_delim_df(se, assay_name), path, col_names = FALSE)
+}
+
+#####################################################################
+########################### OTHER functions  ########################
+#####################################################################
+#' Removes non-informative metadata
+#' 
+#' For each of colData and rowData, removes the variables that have only 1 unique value
+#' @param se SummarizedExperiment to drop metadata for
+#' @examples
+#' # as the se only contains time == 4 data, the time variable can be dropped
+#' seq_se %>% filter(col, time == 4) %>% drop_metadata 
+#' @export
+drop_metadata <- function(se){
+  coldt <- SummarizedExperiment::colData(se) %>% as.data.frame() %>% .[, sapply(., function(col)length(unique(col)) > 1)]
+  rowdt <- SummarizedExperiment::rowData(se) %>% as.data.frame() %>% .[, sapply(., function(col)length(unique(col)) > 1)]
+  SummarizedExperiment::SummarizedExperiment(assays = SummarizedExperiment::assays(se), 
+                                             colData = coldt, 
+                                             rowData = rowdt)
 }

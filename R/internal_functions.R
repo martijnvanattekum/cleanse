@@ -57,15 +57,6 @@ arith_se <- function(se1, se2, fun) {
   update_assays_se(se1, assays)
 }
 
-# #changes one or more of assays, colData, or rowData for an se
-# update_se <- function(se, assays = NULL, colData = NULL, rowData = NULL) {
-#   if (all(is.null(assays), is.null(colData), is.null(rowData)))return(se)
-#   if (is.null(assays))  assays  <- SummarizedExperiment::assays(se)
-#   if (is.null(colData)) colData <- SummarizedExperiment::colData(se) %>% as.data.frame()
-#   if (is.null(rowData)) rowData <- SummarizedExperiment::rowData(se) %>% as.data.frame()
-#   SummarizedExperiment::SummarizedExperiment(assays = assays, colData = colData, rowData = rowData)
-# }
-
 #create a df with all char cols from a df, list or matrix. Helper function for get_delim_df
 as.char.df <- function(.data) {
   .data %>% 
