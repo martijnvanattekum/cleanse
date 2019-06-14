@@ -17,7 +17,7 @@ write_csv(se, path, assay_name = NULL)
 only 1 assay is contained in the se}
 }
 \description{
-Rounds the values in all of the underlying assay matrices to the given number of digits
+Write a se to csv format
 }
 \examples{
 # write the example se to csv

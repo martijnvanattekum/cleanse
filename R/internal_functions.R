@@ -15,13 +15,34 @@ printdata <- function(.data){
   }
 } 
 
-#returns indices that can be used to subset the se
-getidx <- function(.data, fun, ...){
-  .data %>% 
+#returns subset based on metadata
+subset_se <- function(se, axis, fun, ...){
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
+  
+  idx <- {if (axis == "row") SummarizedExperiment::rowData(se) else (SummarizedExperiment::colData(se))} %>% 
     as.data.frame %>% 
     dplyr::mutate(idx = 1:nrow(.)) %>% 
     fun(...) %>% 
     dplyr::pull(idx)
+
+  return(if (axis == "row") se[idx, ] else se[, idx])
+}
+
+#changes metadata
+update_metadata_se <- function(se, axis, fun, ...) {
+  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
+  coldt <- SummarizedExperiment::colData(se) %>% {if (axis == "row") . else fun(as.data.frame(.), ...)}
+  rowdt <- SummarizedExperiment::rowData(se) %>% {if (axis == "col") . else fun(as.data.frame(.), ...)}
+  SummarizedExperiment::SummarizedExperiment(assays = SummarizedExperiment::assays(se), 
+                                             colData = coldt, 
+                                             rowData = rowdt)
+}
+
+#changes assays
+update_assays_se <- function(se, assays) {
+  SummarizedExperiment::SummarizedExperiment(assays = assays, 
+                                             colData = SummarizedExperiment::colData(se), 
+                                             rowData = SummarizedExperiment::rowData(se))
 }
 
 #perform arithmic to 2 equal-sized se's
@@ -33,17 +54,17 @@ arith_se <- function(se1, se2, fun) {
                    function(name) fun(SummarizedExperiment::assays(se1)[[name]], 
                                       SummarizedExperiment::assays(se2)[[name]])) %>% 
     `names<-`(SummarizedExperiment::assayNames(se1))
-  update_se(se1, assays = assays)
+  update_assays_se(se1, assays)
 }
 
-#changes one or more of assays, colData, or rowData for an se
-update_se <- function(se, assays = NULL, colData = NULL, rowData = NULL) {
-  if (all(is.null(assays), is.null(colData), is.null(rowData)))return(se)
-  if (is.null(assays))  assays  <- SummarizedExperiment::assays(se)
-  if (is.null(colData)) colData <- SummarizedExperiment::colData(se) %>% as.data.frame()
-  if (is.null(rowData)) rowData <- SummarizedExperiment::rowData(se) %>% as.data.frame()
-  SummarizedExperiment::SummarizedExperiment(assays = assays, colData = colData, rowData = rowData)
-}
+# #changes one or more of assays, colData, or rowData for an se
+# update_se <- function(se, assays = NULL, colData = NULL, rowData = NULL) {
+#   if (all(is.null(assays), is.null(colData), is.null(rowData)))return(se)
+#   if (is.null(assays))  assays  <- SummarizedExperiment::assays(se)
+#   if (is.null(colData)) colData <- SummarizedExperiment::colData(se) %>% as.data.frame()
+#   if (is.null(rowData)) rowData <- SummarizedExperiment::rowData(se) %>% as.data.frame()
+#   SummarizedExperiment::SummarizedExperiment(assays = assays, colData = colData, rowData = rowData)
+# }
 
 #create a df with all char cols from a df, list or matrix. Helper function for get_delim_df
 as.char.df <- function(.data) {

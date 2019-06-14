@@ -31,7 +31,7 @@ The package contains an example se called `seq_se`. The example contains
 dummy data of expression and copy number values for 10 genes and 48 different conditions.
 To get an overview of the different options available in the se, use print_options:
 ```{r message=FALSE}
-library(dplyr)
+#library(dplyr)
 library(SummarizedExperiment)
 library(cleanse)
 ```

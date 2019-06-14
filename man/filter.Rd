@@ -18,7 +18,7 @@ filter(se, axis, ...)
 Multiple conditions are combined with & or ,. Only rows where the condition evaluates to TRUE are kept.}
 }
 \description{
-Use filter() to choose rows/genes where conditions are true. Uses attached rowData
+Use filter() to choose rows/genes where conditions are true. Uses attached metadata
 to find matches.
 }
 \examples{
