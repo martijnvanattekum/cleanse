@@ -12,7 +12,8 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 #' @param se SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... Logical predicates defined in terms of the variables in .data. 
-#' Multiple conditions are combined with & or ,. Only rows where the condition evaluates to TRUE are kept.
+#' Multiple conditions are combined with & or ,. Only rows where the condition 
+#' evaluates to TRUE are kept.
 #' @examples
 #' #filter the rows of the example se with genes from the IL group
 #' seq_se %>% filter(row, gene_group == "IL")
@@ -107,17 +108,24 @@ sample_frac.SummarizedExperiment <- function(se, axis, ...){
 
 #' Select variables by name for rowData or colData
 #' 
-#' Choose variables from the rowData or colData that you want to keep. Select drops all other variables.
+#' Choose variables from the rowData or colData that you want to keep. Select drops 
+#' all other variables.
 #' @param se SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
-#' @param ... One or more unquoted expressions separated by commas. You can treat variable names like they are positions, so you can use expressions like x:y to select ranges of variables.
-#' Positive values select variables; negative values drop variables. If the first expression is negative, select() will automatically start with all variables.  
+#' @param ... One or more unquoted expressions separated by commas. You can treat 
+#' variable names like they are positions, so you can use expressions like x:y to 
+#' select ranges of variables.
+#' Positive values select variables; negative values drop variables. If the first 
+#' expression is negative, select() will automatically start with all variables.  
 #' 
 #' Use named arguments, e.g. new_name = old_name, to rename selected variables.  
 #' 
-#' The arguments in ... are automatically quoted and evaluated in a context where column names represent column positions. They also support unquoting and splicing. See vignette("programming") for an introduction to these concepts.  
+#' The arguments in ... are automatically quoted and evaluated in a context where 
+#' column names represent column positions. They also support unquoting and splicing. 
+#' See vignette("programming") for an introduction to these concepts.  
 #' 
-#' See select helpers for more details and examples about tidyselect helpers such as starts_with(), everything(), ...
+#' See select helpers for more details and examples about tidyselect helpers such as 
+#' starts_with(), everything(), ...
 #' @examples
 #' # remove the time variable after filtering for time == 0
 #' seq_se %>% filter(col, time == 0) %>% select(col, -time)
@@ -127,23 +135,62 @@ select <- function(se, axis, ...){UseMethod("select")}
 #' @rdname select 
 #' @export
 select.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, deparse(substitute(axis)), dplyr::select, ...)
+  update_metadata_se(se, axis, dplyr::select, ...)
+} 
+
+#' Select variables by name for rowData or colData
+#' 
+#' The selection is based on boolean vector
+#' @param se SummarizedExperiment to subset
+#' @param axis The axis to perform the operation on. Either row or col.
+#' @param ... One or more unquoted expressions separated by commas. You can treat 
+#' variable names like they are positions, so you can use expressions like x:y to 
+#' select ranges of variables.
+#' Positive values select variables; negative values drop variables. 
+#' If the first expression is negative, select() will automatically start 
+#' with all variables.  
+#' 
+#' Use named arguments, e.g. new_name = old_name, to rename selected variables.  
+#' 
+#' The arguments in ... are automatically quoted and evaluated in a context where 
+#' column names represent column positions. They also support unquoting and splicing. 
+#' See vignette("programming") for an introduction to these concepts.  
+#' 
+#' See select helpers for more details and examples about tidyselect helpers such as s
+#' tarts_with(), everything(), ...
+#' @examples
+#' # remove the time variable after filtering for time == 0
+#' seq_se %>% filter(col, time == 0) %>% select(col, -time)
+#' @export
+select_if <- function(se, axis, ...){UseMethod("select")}
+
+#' @rdname select_if
+#' @export
+select_if.SummarizedExperiment <- function(se, axis, ...){
+  update_metadata_se(se, deparse(substitute(axis)), dplyr::select_if, ...)
 } 
 
 #' Rename variables by name for rowData or colData
 #' 
-#' Choose variables from the rowData or colData that you want to rename. Rename keeps all other variables.
+#' Choose variables from the rowData or colData that you want to rename. Rename keeps 
+#' all other variables.
 #' @param se SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
-#' @param ... One or more unquoted expressions separated by commas. You can treat variable names like they are positions, so you can use expressions like x:y to select ranges of variables.
+#' @param ... One or more unquoted expressions separated by commas. You can treat 
+#' variable names like they are positions, so you can use expressions like x:y to 
+#' select ranges of variables.
 #' 
-#' Positive values select variables; negative values drop variables. If the first expression is negative, select() will automatically start with all variables.  
+#' Positive values select variables; negative values drop variables. If the first 
+#' expression is negative, select() will automatically start with all variables.  
 #' 
 #' Use named arguments, e.g. new_name = old_name, to rename selected variables.  
 #' 
-#' The arguments in ... are automatically quoted and evaluated in a context where column names represent column positions. They also support unquoting and splicing. See vignette("programming") for an introduction to these concepts. 
+#' The arguments in ... are automatically quoted and evaluated in a context where 
+#' column names represent column positions. They also support unquoting and splicing. 
+#' See vignette("programming") for an introduction to these concepts. 
 #'  
-#' See select helpers for more details and examples about tidyselect helpers such as starts_with(), everything(), ...
+#' See select helpers for more details and examples about tidyselect helpers such as 
+#' starts_with(), everything(), ...
 #' @examples
 #' # rename the time variable after changing it to minutes
 #' seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
@@ -180,7 +227,6 @@ mutate <- function(se, axis, ...){UseMethod("mutate")}
 mutate.SummarizedExperiment <- function(se, axis, ...){
   update_metadata_se(se, deparse(substitute(axis)), dplyr::mutate, ...)
 } 
-
 
 #####################################################################
 #################### Arithmetic operations  #########################
@@ -299,10 +345,7 @@ write_csv <- function(se, path, assay_name = NULL){UseMethod("write_csv")}
 #' @rdname write_csv
 #' @export
 write_csv <- function(se, path, assay_name = NULL){ 
-  if (is.null(assay_name) & length(SummarizedExperiment::assayNames(se)) == 1){
-    assay_name <- SummarizedExperiment::assayNames(se)[[1]]}
-  if (!assay_name %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay '", assay_name, "' does not exist in the supplied se."))
-    readr::write_csv(get_delim_df(se, assay_name), path, col_names = FALSE)
+  readr::write_csv(get_delim_df(se, assay_name), path, col_names = FALSE)
 }
 
 #' Write a se to tsv format
@@ -321,9 +364,6 @@ write_tsv <- function(se, path, assay_name = NULL){UseMethod("write_tsv")}
 #' @rdname write_tsv
 #' @export
 write_tsv <- function(se, path, assay_name = NULL){ 
-  if (is.null(assay_name) & length(SummarizedExperiment::assayNames(se)) == 1){
-    assay_name <- SummarizedExperiment::assayNames(se)[[1]]}
-  if (!assay_name %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay '", assay_name, "' does not exist in the supplied se."))
   readr::write_tsv(get_delim_df(se, assay_name), path, col_names = FALSE)
 }
 
@@ -344,9 +384,6 @@ write_delim <- function(se, path, delim = " ", assay_name = NULL){UseMethod("wri
 #' @rdname write_delim
 #' @export
 write_delim <- function(se, path, delim = " ", assay_name = NULL){
-  if (is.null(assay_name) & length(SummarizedExperiment::assayNames(se)) == 1){
-    assay_name <- SummarizedExperiment::assayNames(se)[[1]]}
-  if (!assay_name %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay '", assay_name, "' does not exist in the supplied se."))
   readr::write_delim(get_delim_df(se, assay_name), path, col_names = FALSE)
 }
 
@@ -362,9 +399,10 @@ write_delim <- function(se, path, delim = " ", assay_name = NULL){
 #' seq_se %>% filter(col, time == 4) %>% drop_metadata 
 #' @export
 drop_metadata <- function(se){
-  coldt <- SummarizedExperiment::colData(se) %>% as.data.frame() %>% .[, sapply(., function(col)length(unique(col)) > 1)]
-  rowdt <- SummarizedExperiment::rowData(se) %>% as.data.frame() %>% .[, sapply(., function(col)length(unique(col)) > 1)]
-  SummarizedExperiment::SummarizedExperiment(assays = SummarizedExperiment::assays(se), 
-                                             colData = coldt, 
-                                             rowData = rowdt)
+  fun <- ~dplyr::n_distinct(.) > 1
+  se %>% 
+    select_if(row, fun) %>% 
+    select_if(col, fun)
 }
+
+#!update select_if to accept unquoted 

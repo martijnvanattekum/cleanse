@@ -30,6 +30,8 @@ subset_se <- function(se, axis, fun, ...){
 
 #changes metadata
 update_metadata_se <- function(se, axis, fun, ...) {
+#  axis <- deparse(axis)
+#  print(paste("axis", axis))
   if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
   coldt <- SummarizedExperiment::colData(se) %>% {if (axis == "row") . else fun(as.data.frame(.), ...)}
   rowdt <- SummarizedExperiment::rowData(se) %>% {if (axis == "col") . else fun(as.data.frame(.), ...)}
@@ -37,6 +39,10 @@ update_metadata_se <- function(se, axis, fun, ...) {
                                              colData = coldt, 
                                              rowData = rowdt)
 }
+
+update_metadata_se(se, "row", dplyr::select_if, fun)
+
+
 
 #changes assays
 update_assays_se <- function(se, assays) {
@@ -66,8 +72,12 @@ as.char.df <- function(.data) {
 }
 
 #returns a writable df based on each assay in the se
-get_delim_df <- function(se, assay_name = NULL) {
-
+get_delim_df <- function(se, assay_name) {
+  
+  if (is.null(assay_name) & length(SummarizedExperiment::assayNames(se)) == 1){
+    assay_name <- SummarizedExperiment::assayNames(se)[[1]]}
+  if (!assay_name %in% SummarizedExperiment::assayNames(se))stop(paste0("Assay '", assay_name, "' does not exist in the supplied se."))
+  
   coldt <- SummarizedExperiment::colData(se) %>% as.char.df()
   rowdt <- SummarizedExperiment::rowData(se) %>% as.char.df()
   assay <- SummarizedExperiment::assays(se)[[assay_name]] %>% as.char.df() %>% 
