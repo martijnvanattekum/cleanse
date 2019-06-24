@@ -30,8 +30,6 @@ subset_se <- function(se, axis, fun, ...){
 
 #changes metadata
 update_metadata_se <- function(se, axis, fun, ...) {
-#  axis <- deparse(axis)
-#  print(paste("axis", axis))
   if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
   coldt <- SummarizedExperiment::colData(se) %>% {if (axis == "row") . else fun(as.data.frame(.), ...)}
   rowdt <- SummarizedExperiment::rowData(se) %>% {if (axis == "col") . else fun(as.data.frame(.), ...)}
@@ -94,3 +92,4 @@ get_delim_df <- function(se, assay_name) {
   
   dplyr::bind_cols(leftcol, middlecols, rightcols)
 }
+

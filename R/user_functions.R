@@ -5,10 +5,12 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 ###################### dplyr functions ##############################
 #####################################################################
 
+### SUBSET FUNCTIONS ###
+
 #' Returns rows or cols of se with matching conditions
 #' 
 #' Use filter() to choose rows/genes where conditions are true. Uses attached metadata
-#' to find matches. 
+#' to find matches.
 #' @param se SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... Logical predicates defined in terms of the variables in .data. 
@@ -18,13 +20,12 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 #' #filter the rows of the example se with genes from the IL group
 #' seq_se %>% filter(row, gene_group == "IL")
 #' @export
-filter <- function(se, axis, ...){UseMethod("filter")}
+setGeneric("filter", function(se, axis, ...) standardGeneric("filter"))
 
 #' @rdname filter 
 #' @export
-filter.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::filter, ...)
-}
+setMethod("filter", "SummarizedExperiment", function(se, axis, ...){
+  subset_se(se, deparse(substitute(axis)), dplyr::filter, ...)})
 
 #' Choose rows by position
 #' 
@@ -42,13 +43,12 @@ filter.SummarizedExperiment <- function(se, axis, ...){
 #' #subset the first 10 cols of the se
 #' seq_se %>% slice(col, 1:10)
 #' @export
-slice <- function(se, axis, ...){UseMethod("slice")}
+setGeneric("slice", function(se, axis, ...) standardGeneric("sclice"))
 
 #' @rdname slice 
 #' @export
-slice.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::slice, ...)
-}
+setMethod("slice", "SummarizedExperiment", function(se, axis, ...){
+  subset_se(se, deparse(substitute(axis)), dplyr::slice, ...)})
 
 #' Arrange by variables
 #' 
@@ -62,13 +62,12 @@ slice.SummarizedExperiment <- function(se, axis, ...){
 #' # Arrange seq_se by gene_group and then gene_name
 #' seq_se %>% cleanse::arrange(row, gene_group, gene_name)
 #' @export
-arrange <- function(se, axis, ...){UseMethod("arrange")}
+setGeneric("arrange", function(se, axis, ...) standardGeneric("arrange"))
 
 #' @rdname arrange
 #' @export
-arrange.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::arrange, ...)
-}
+setMethod("arrange", "SummarizedExperiment", function(se, axis, ...){
+  subset_se(se, deparse(substitute(axis)), dplyr::arrange, ...)})
 
 #' Sample n rows or cols from a se
 #' 
@@ -80,13 +79,12 @@ arrange.SummarizedExperiment <- function(se, axis, ...){
 #' #Sample 4 columns from seq_se with replacement
 #' seq_se %>% sample_n(col, size = 4, replace = TRUE)
 #' @export
-sample_n <- function(se, axis, ...){UseMethod("sample_n")}
+setGeneric("sample_n", function(se, axis, ...) standardGeneric("sample_"))
 
 #' @rdname sample_n
 #' @export
-sample_n.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::sample_n, ...)
-}
+setMethod("sample_n", "SummarizedExperiment", function(se, axis, ...){
+  subset_se(se, deparse(substitute(axis)), dplyr::sample_n, ...)})
 
 #' Sample a fraction of total rows or cols from a se
 #' 
@@ -98,13 +96,14 @@ sample_n.SummarizedExperiment <- function(se, axis, ...){
 #' #Sample half of the genes from seq_se
 #' seq_se %>% sample_frac(row, size = .5)
 #' @export
-sample_frac <- function(se, axis,...){UseMethod("sample_frac")}
+setGeneric("sample_frac", function(se, axis, ...) standardGeneric("sample_frac"))
 
 #' @rdname sample_frac
 #' @export
-sample_frac.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::sample_frac, ...)
-}
+setMethod("sample_frac", "SummarizedExperiment", function(se, axis, ...){
+  subset_se(se, deparse(substitute(axis)), dplyr::sample_frac, ...)})
+
+### CHANGE METADATA ###
 
 #' Select variables by name for rowData or colData
 #' 
@@ -130,13 +129,12 @@ sample_frac.SummarizedExperiment <- function(se, axis, ...){
 #' # remove the time variable after filtering for time == 0
 #' seq_se %>% filter(col, time == 0) %>% select(col, -time)
 #' @export
-select <- function(se, axis, ...){UseMethod("select")}
+setGeneric("select", function(se, axis, ...) standardGeneric("select"))
 
 #' @rdname select 
 #' @export
-select.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, axis, dplyr::select, ...)
-} 
+setMethod("select", "SummarizedExperiment", function(se, axis, ...){
+  update_metadata_se(se, deparse(substitute(axis)), dplyr::select, ...)}) 
 
 #' Select variables by name for rowData or colData
 #' 
@@ -162,13 +160,12 @@ select.SummarizedExperiment <- function(se, axis, ...){
 #' # remove the time variable after filtering for time == 0
 #' seq_se %>% filter(col, time == 0) %>% select(col, -time)
 #' @export
-select_if <- function(se, axis, ...){UseMethod("select")}
+setGeneric("select_if", function(se, axis, ...) standardGeneric("select_if"))
 
 #' @rdname select_if
 #' @export
-select_if.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, deparse(substitute(axis)), dplyr::select_if, ...)
-} 
+setMethod("select_if", "SummarizedExperiment", function(se, axis, ...){
+  update_metadata_se(se, deparse(substitute(axis)), dplyr::select_if, ...)}) 
 
 #' Rename variables by name for rowData or colData
 #' 
@@ -195,13 +192,12 @@ select_if.SummarizedExperiment <- function(se, axis, ...){
 #' # rename the time variable after changing it to minutes
 #' seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
 #' @export
-rename <- function(se, axis, ...){UseMethod("rename")}
+setGeneric("rename", function(se, axis, ...) standardGeneric("rename"))
 
 #' @rdname rename 
 #' @export
-rename.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, deparse(substitute(axis)), dplyr::rename, ...)
-} 
+setMethod("rename", "SummarizedExperiment", function(se, axis, ...){
+  update_metadata_se(se, deparse(substitute(axis)), dplyr::rename, ...)}) 
 
 #' Create or transform variables
 #' 
@@ -220,13 +216,12 @@ rename.SummarizedExperiment <- function(se, axis, ...){
 #' #Change the treatment time from hours to minutes
 #' seq_se %>% mutate(col, time = (time * 60))
 #' @export mutate
-mutate <- function(se, axis, ...){UseMethod("mutate")}
+setGeneric("mutate", function(se, axis, ...) standardGeneric("mutate"))
 
 #' @rdname mutate
 #' @export
-mutate.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, deparse(substitute(axis)), dplyr::mutate, ...)
-} 
+setMethod("mutate", "SummarizedExperiment", function(se, axis, ...){
+  update_metadata_se(se, deparse(substitute(axis)), dplyr::mutate, ...)}) 
 
 #####################################################################
 #################### Arithmetic operations  #########################
@@ -305,9 +300,8 @@ mutate.SummarizedExperiment <- function(se, axis, ...){
 #' # round the example se to 2 digits
 #' seq_se %>% round(2)
 #' @export
-round.SummarizedExperiment <- function(x, digits = 0){
-  update_assays_se(x, lapply(SummarizedExperiment::assays(x), function(mat)base::round(mat, digits)))
-}
+setMethod("round", "SummarizedExperiment",  function(x, digits = 0){
+  update_assays_se(x, lapply(SummarizedExperiment::assays(x), function(mat)base::round(mat, digits)))})
 
 #####################################################################
 ################## Output functions (readr)  ########################
@@ -321,14 +315,14 @@ round.SummarizedExperiment <- function(x, digits = 0){
 #' #show available options for the example se
 #' print_options(seq_se)
 #' @export
-print_options <- function(se) {
+setMethod("print_options", "SummarizedExperiment",  function(se){
   cat(paste("** ASSAY OPTIONS FOR", deparse(substitute(se)), "** \n"))
   cat(paste(SummarizedExperiment::assayNames(se), collapse = ", "))
   cat(paste("\n\n** COLDATA OPTIONS FOR", deparse(substitute(se)), "** \n"))
   printdata(SummarizedExperiment::colData(se))
   cat(paste("\n** ROWDATA OPTIONS FOR", deparse(substitute(se)), "** \n"))
   printdata(SummarizedExperiment::rowData(se))
-}
+})
 
 #' Write a se to csv format
 #' 
@@ -340,13 +334,12 @@ print_options <- function(se) {
 #' # write the example se to csv
 #' seq_se %>% round(3) %>% write_csv("out.csv", "expression")
 #' @export
-write_csv <- function(se, path, assay_name = NULL){UseMethod("write_csv")}
+setGeneric("write_csv", function(se,  path, assay_name = NULL, ...) standardGeneric("write_csv"))
 
 #' @rdname write_csv
 #' @export
-write_csv <- function(se, path, assay_name = NULL){ 
-  readr::write_csv(get_delim_df(se, assay_name), path, col_names = FALSE)
-}
+setMethod("write_csv", "SummarizedExperiment",  function(se, path, assay_name = NULL){
+  readr::write_csv(get_delim_df(se, assay_name), path, col_names = FALSE)})
 
 #' Write a se to tsv format
 #' 
@@ -359,13 +352,12 @@ write_csv <- function(se, path, assay_name = NULL){
 #' # write the example se to tsv
 #' seq_se %>% round(3) %>% write_tsv("out.tsv", "expression")
 #' @export
-write_tsv <- function(se, path, assay_name = NULL){UseMethod("write_tsv")}
+setGeneric("write_tsv", function(se,  path, assay_name = NULL, ...) standardGeneric("write_tsv"))
 
 #' @rdname write_tsv
 #' @export
-write_tsv <- function(se, path, assay_name = NULL){ 
-  readr::write_tsv(get_delim_df(se, assay_name), path, col_names = FALSE)
-}
+setMethod("write_tsv", "SummarizedExperiment",  function(se, path, assay_name = NULL){
+  readr::write_tsv(get_delim_df(se, assay_name), path, col_names = FALSE)})
 
 #' Write a se to delim format
 #' 
@@ -379,13 +371,12 @@ write_tsv <- function(se, path, assay_name = NULL){
 #' # write the example se to delim file, defaulting to " " as delimiter
 #' seq_se %>% round(3) %>% write_delim("out.txt", assay_name = "expression")
 #' @export
-write_delim <- function(se, path, delim = " ", assay_name = NULL){UseMethod("write_delim")}
+setGeneric("write_delim", function(se,  path, delim = " ", assay_name = NULL, ...) standardGeneric("write_delim"))
 
 #' @rdname write_delim
 #' @export
-write_delim <- function(se, path, delim = " ", assay_name = NULL){
-  readr::write_delim(get_delim_df(se, assay_name), path, col_names = FALSE)
-}
+setMethod("write_delim", "SummarizedExperiment",  function(se, path, delim = " ", assay_name = NULL){
+  readr::write_delim(get_delim_df(se, assay_name), path, col_names = FALSE)})
 
 #####################################################################
 ########################### OTHER functions  ########################
@@ -398,11 +389,11 @@ write_delim <- function(se, path, delim = " ", assay_name = NULL){
 #' # as the se only contains time == 4 data, the time variable can be dropped
 #' seq_se %>% filter(col, time == 4) %>% drop_metadata 
 #' @export
-drop_metadata <- function(se){
+setMethod("drop_metadata", "SummarizedExperiment", function(se){
   fun <- ~dplyr::n_distinct(.) > 1
   se %>% 
     select_if(row, fun) %>% 
     select_if(col, fun)
-}
+})
 
 #!update select_if to accept unquoted 
