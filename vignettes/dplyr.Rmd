@@ -63,10 +63,6 @@ dim(seq_se)
 dim(sample_subset_se)
 ```
 
-To subset a se by position, slice can be used:
-```{r}
-seq_se %>% slice(col, 1:10) #select the first 10 columns
-```
 
 `arrange` is used to consecutively sort a data frame by a variable. In this case, 
 we arrange the rows, first by gene_name and next by gene_group.
@@ -79,25 +75,14 @@ rowData(seq_se_reordered)
 The extended `sample_n` and `sample_frac` functions filter n random rows/cols 
 or a random fraction respectively
 ```{r}
-seq_se %>% sample_n(col, size = 4, replace = TRUE) #note the change in dim
+seq_se %>% sample_n_row(4, replace = TRUE) #note the change in dim
 
-seq_se %>% sample_frac(row, size = .5) #note the change in dim
+seq_se %>% sample_frac_row(.5) #note the change in dim
 ```
 
 ## Using dplyr functions to change the se's metadata
 These functions return a se with updated rowData or colData. The dimensions and
 assay values of the se will not be changed by these functions.
-
-`select` can be used to select variables, and `rename` will rename these variables. 
-```{r}
-# remove the time variable after filtering for time == 0
-seq_se_min_time <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
-print_options(seq_se_min_time)  #note the time variable has disappeared from the colData
-
-# rename the time variable after changing it to minutes
-seq_se_ren_time <- seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
-print_options(seq_se_ren_time)  #note the time variable is now called time_mins
-```
 
 `mutate` adds or changes variables. If we for instance want to change the time for 
 the samples from hours to minutes, we can do

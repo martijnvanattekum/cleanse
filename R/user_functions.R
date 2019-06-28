@@ -9,7 +9,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 #' 
 #' Use filter() to choose rows/genes where conditions are true. Uses attached metadata
 #' to find matches. 
-#' @param se SummarizedExperiment to subset
+#' @param .data SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... Logical predicates defined in terms of the variables in .data. 
 #' Multiple conditions are combined with & or ,. Only rows where the condition evaluates to TRUE are kept.
@@ -18,14 +18,14 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 #' seq_se %>% filter(row, gene_group == "IL")
 #' @importFrom dplyr filter
 #' @export
-filter.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::filter, ...)
+filter.SummarizedExperiment <- function(.data, axis, ...){
+  subset_se(.data, deparse(substitute(axis)), dplyr::filter, ...)
 }
 
 #' Choose rows by position
 #' 
 #' Choose rows by their ordinal position in the se
-#' @param se SummarizedExperiment to subset
+#' @param .data SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... Integer row values. Provide either positive values to keep, or 
 #' negative values to drop. The values provided must be either all positive or all 
@@ -39,61 +39,131 @@ filter.SummarizedExperiment <- function(se, axis, ...){
 #' seq_se %>% slice(col, 1:10)
 #' @importFrom dplyr slice
 #' @export
-slice.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::slice, ...)
+slice.SummarizedExperiment <- function(.data, axis, ...){
+  subset_se(.data, deparse(substitute(axis)), dplyr::slice, ...)
 }
 
 #' Arrange by variables
 #' 
 #' Order either rows or cols from se by an expression involving its variables.
-#' @param se SummarizedExperiment to arrange
+#' @param .data SummarizedExperiment to arrange
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... Comma separated list of unquoted variable names, 
 #' or expressions involving variable names. 
 #' Use desc() to sort a variable in descending order
 #' @examples
 #' # Arrange seq_se by gene_group and then gene_name
-#' seq_se %>% cleanse::arrange(row, gene_group, gene_name)
+#' seq_se %>% arrange(row, gene_group, gene_name)
 #' @importFrom dplyr arrange
 #' @export
-arrange.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::arrange, ...)
+arrange.SummarizedExperiment <- function(.data, axis, ...){
+  subset_se(.data, deparse(substitute(axis)), dplyr::arrange, ...)
 }
 
-#' Sample n rows or cols from a se
+#' Sample n rows from a se
 #' 
-#' Selects random rows or columns
-#' @param se SummarizedExperiment to sample
-#' @param axis The axis to perform the operation on. Either row or col.
-#' @param ... Additional arguments to sample_n
+#' Selects random rows
+#' @param tbl SummarizedExperiment to sample
+#' @param size The number of rows to select
+#' @param replace Sample with or without replacement?
+#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
+#' numbers the same length as the input. Weights are automatically standardised to 
+#' sum to 1.
+#'
+#' This argument is automatically quoted and later evaluated in the context of the 
+#' data frame. It supports unquoting. See vignette("programming") for an introduction 
+#' to these concepts.
+#' @param ... ignored
+#' @examples
+#' #Sample 4 rows from seq_se with replacement
+#' seq_se %>% sample_n_row(size = 4, replace = TRUE)
+#' @export
+sample_n_row <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  UseMethod("sample_n_row")}
+
+#' @export
+sample_n_row.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  tbl[sample.int(nrow(tbl), size = size, replace = replace, prob = weight),]}
+  
+#' Sample n cols from a se
+#' 
+#' Selects random cols
+#' @param tbl SummarizedExperiment to sample
+#' @param size The number of cols to select
+#' @param replace Sample with or without replacement?
+#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
+#' numbers the same length as the input. Weights are automatically standardised to 
+#' sum to 1.
+#'
+#' This argument is automatically quoted and later evaluated in the context of the 
+#' data frame. It supports unquoting. See vignette("programming") for an introduction 
+#' to these concepts.
+#' @param ... ignored
 #' @examples
 #' #Sample 4 columns from seq_se with replacement
-#' seq_se %>% sample_n(col, size = 4, replace = TRUE)
-#' @importFrom dplyr sample_n
+#' seq_se %>% sample_n_col(4, replace = TRUE)
 #' @export
-sample_n.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::sample_n, ...)
-}
+sample_n_col <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  UseMethod("sample_n_col")}
 
-#' Sample a fraction of total rows or cols from a se
-#' 
-#' Selects random fraction of all rows or columns
-#' @param se SummarizedExperiment to sample
-#' @param axis The axis to perform the operation on. Either row or col.
-#' @param ... Additional arguments to sample_frac
-#' @examples
-#' #Sample half of the genes from seq_se
-#' seq_se %>% sample_frac(row, size = .5)
-#' @importFrom dplyr sample_frac
 #' @export
-sample_frac.SummarizedExperiment <- function(se, axis, ...){
-  subset_se(se, deparse(substitute(axis)), dplyr::sample_frac, ...)
-}
+sample_n_col.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  tbl[,sample.int(ncol(tbl), size = size, replace = replace, prob = weight)]}
+
+#' Sample a fraction of rows from a se
+#' 
+#' Selects a random fraction of rows
+#' @param tbl SummarizedExperiment to sample
+#' @param size The fraction of rows to select
+#' @param replace Sample with or without replacement?
+#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
+#' numbers the same length as the input. Weights are automatically standardised to 
+#' sum to 1.
+#'
+#' This argument is automatically quoted and later evaluated in the context of the 
+#' data frame. It supports unquoting. See vignette("programming") for an introduction 
+#' to these concepts.
+#' @param ... ignored
+#' @examples
+#' #Sample half of the rows
+#' seq_se %>% sample_frac_row(size = .5)
+#' @export
+sample_frac_row <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  UseMethod("sample_frac_row")}
+
+#' @export
+sample_frac_row.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  tbl[sample.int(nrow(tbl), size = size, replace = replace, prob = weight),]}
+
+#' Sample a fraction of cols from a se
+#' 
+#' Selects a random fraction of cols
+#' @param tbl SummarizedExperiment to sample
+#' @param size The fraction of cols to select
+#' @param replace Sample with or without replacement?
+#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
+#' numbers the same length as the input. Weights are automatically standardised to 
+#' sum to 1.
+#'
+#' This argument is automatically quoted and later evaluated in the context of the 
+#' data frame. It supports unquoting. See vignette("programming") for an introduction 
+#' to these concepts.
+#' @param ... ignored
+#' @examples
+#' #Sample half of the columns
+#' seq_se %>% sample_frac_col(size = .5)
+#' @export
+sample_frac_col <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  UseMethod("sample_frac_col")}
+
+#' @export
+sample_frac_col.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
+  tbl[,sample.int(ncol(tbl), size = size, replace = replace, prob = weight)]}
 
 #' Select variables by name for rowData or colData
 #' 
 #' Choose variables from the rowData or colData that you want to keep. Select drops all other variables.
-#' @param se SummarizedExperiment to subset
+#' @param .data SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... One or more unquoted expressions separated by commas. You can treat variable names like they are positions, so you can use expressions like x:y to select ranges of variables.
 #' Positive values select variables; negative values drop variables. If the first expression is negative, select() will automatically start with all variables.  
@@ -108,14 +178,14 @@ sample_frac.SummarizedExperiment <- function(se, axis, ...){
 #' seq_se %>% filter(col, time == 0) %>% select(col, -time)
 #' @importFrom dplyr select
 #' @export
-select.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, deparse(substitute(axis)), dplyr::select, ...)
+select.SummarizedExperiment <- function(.data, axis, ...){
+  update_metadata_se(.data, deparse(substitute(axis)), dplyr::select, ...)
 } 
 
 #' Rename variables by name for rowData or colData
 #' 
 #' Choose variables from the rowData or colData that you want to rename. Rename keeps all other variables.
-#' @param se SummarizedExperiment to subset
+#' @param .data SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... One or more unquoted expressions separated by commas. You can treat variable names like they are positions, so you can use expressions like x:y to select ranges of variables.
 #' 
@@ -131,8 +201,8 @@ select.SummarizedExperiment <- function(se, axis, ...){
 #' seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
 #' @importFrom dplyr rename
 #' @export
-rename.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, deparse(substitute(axis)), dplyr::rename, ...)
+rename.SummarizedExperiment <- function(.data, axis, ...){
+  update_metadata_se(.data, deparse(substitute(axis)), dplyr::rename, ...)
 } 
 
 #' Create or transform variables
@@ -140,7 +210,7 @@ rename.SummarizedExperiment <- function(se, axis, ...){
 #' mutate() adds new variables and preserves existing ones; 
 #' it preserves the number of rows/cols of the input. 
 #' New variables overwrite existing variables of the same name.
-#' @param se SummarizedExperiment to subset
+#' @param .data SummarizedExperiment to subset
 #' @param axis The axis to perform the operation on. Either row or col.
 #' @param ... Name-value pairs of expressions, each with length 1 or the same 
 #' length as the number of rows/cols in row- or colData. The name of each argument will 
@@ -153,8 +223,8 @@ rename.SummarizedExperiment <- function(se, axis, ...){
 #' seq_se %>% mutate(col, time = (time * 60))
 #' @importFrom dplyr mutate
 #' @export
-mutate.SummarizedExperiment <- function(se, axis, ...){
-  update_metadata_se(se, deparse(substitute(axis)), dplyr::mutate, ...)
+mutate.SummarizedExperiment <- function(.data, axis, ...){
+  update_metadata_se(.data, deparse(substitute(axis)), dplyr::mutate, ...)
 } 
 
 
