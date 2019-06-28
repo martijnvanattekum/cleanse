@@ -3,7 +3,7 @@
 
 ## Overview
 
-The SummarizedExperiment (se) class offers a useful way to store multiple row and column data along with the values from an experiment and is widely used in computational biology.  
+The SummarizedExperiment (se) class offers a useful way to store multiple row and column metadata along with the values from an experiment and is widely used in computational biology.  
 Although subsetting se's is possible with base R notation (ie using `[]`), se's cannot be manipulated using grammar from the tidyverse. This package contains a number of wrapper functions to extend the usage of se's:
 - dplyr functions: to use dplyr's grammar of data manipulation
 - arithmetic functions: to perform arithmetic on 2 se's
@@ -13,14 +13,19 @@ Usage information can be found by reading the vignettes: `browseVignettes("clean
 
 ## Supported dplyr functions
 
-  - `mutate()` adds new variables that are functions of existing
-    variables
+_Functions that subset the se based on the rowData or colData_
   - `filter()` picks rows/cols based on the se's attached rowData/colData
-  - `select()` selects variables in the se's attached rowData/colData
-  - `rename()` renames variables in the se's attached rowData/colData
-  - `arrange()` changes the ordering of the rows.
-  - `sample_n()` picks n random cols/rows from the se.
-  - `sample_frac()` picks a random fractions of cols/rows from the se.
+  - `slice()` picks rows/cols by position
+  - `arrange()` changes the ordering of the rows
+  - `sample_n_<row/col>()` picks n random rows or cols from the se.
+  - `sample_frac_<row/col>()` picks a random fractions of rows or cols from the se.
+
+_Functions that change the se's rowData or colData_
+- `select()` selects variables
+- `rename()` renames variables
+- `mutate()` adds new variables that are functions of existing
+  variables
+- `drop_metadata()` drops all rowData and colData having only 1 unique value
 
 ## Supported arithmetic functions
 

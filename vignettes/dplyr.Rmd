@@ -29,10 +29,18 @@ the row or the col** of the se. Cleanse will then take care of updating the se.
 
 The package contains an example se called `seq_se`. The example contains
 dummy data of expression and copy number values for 10 genes and 48 different conditions.
-To get an overview of the different options available in the se, use print_options:
+To get an overview of the different options available in the se, use `print_options`:
 ```{r message=FALSE}
-library(SummarizedExperiment)
 library(cleanse)
+```
+```{r message=FALSE, echo = FALSE}
+#detach to avoid conflicts with rename and slice functions when building vignettes
+detach("package:SummarizedExperiment") 
+detach("package:DelayedArray") 
+detach("package:GenomicRanges") 
+detach("package:GenomeInfoDb") 
+detach("package:IRanges") 
+detach("package:S4Vectors") 
 ```
 ```{r}
 print_options(seq_se)
@@ -63,17 +71,22 @@ dim(seq_se)
 dim(sample_subset_se)
 ```
 
+To subset a se by position, `slice` can be used:
+```{r}
+seq_se %>% slice(col, 1:10) #select the first 10 columns
+```
 
 `arrange` is used to consecutively sort a data frame by a variable. In this case, 
 we arrange the rows, first by gene_name and next by gene_group.
 ```{r}
 seq_se_reordered <- seq_se %>% arrange(row, gene_name, gene_group)
-rowData(seq_se)
-rowData(seq_se_reordered)
+#SummarizedExperiment::rowData(seq_se)
+#SummarizedExperiment::rowData(seq_se_reordered)
 ```
 
-The extended `sample_n` and `sample_frac` functions filter n random rows/cols 
-or a random fraction respectively
+The extended `sample_n_<row/col>` and `sample_frac_<row/col>` functions filter n 
+random rows/cols or a random fraction respectively. Note that the axis argument is
+included in the function name to avoid a mismatch in arguments with the dplyr generic.
 ```{r}
 seq_se %>% sample_n_row(4, replace = TRUE) #note the change in dim
 
@@ -83,6 +96,17 @@ seq_se %>% sample_frac_row(.5) #note the change in dim
 ## Using dplyr functions to change the se's metadata
 These functions return a se with updated rowData or colData. The dimensions and
 assay values of the se will not be changed by these functions.
+
+`select` can be used to select variables, and `rename` will rename these variables.
+```{r}
+# remove the time variable after filtering for time == 0
+seq_se_min_time <- seq_se %>% filter(col, time == 0) %>% select(col, -time)
+print_options(seq_se_min_time)  #note the time variable has disappeared from the colData
+
+# rename the time variable after changing it to minutes
+seq_se_ren_time <- seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
+print_options(seq_se_ren_time)  #note the time variable is now called time_mins
+```
 
 `mutate` adds or changes variables. If we for instance want to change the time for 
 the samples from hours to minutes, we can do
@@ -95,7 +119,7 @@ or to combine the gene groups and gene names to one new variable in the rowData
 ```{r}
 seq_se_gene_comb <- seq_se %>% 
   mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
-rowData(seq_se_gene_comb)$group_and_name
+#SummarizedExperiment::rowData(seq_se_gene_comb)$group_and_name
 ```
 
 A non-dplyr function that will change the metadata is `drop_metadata`: This function

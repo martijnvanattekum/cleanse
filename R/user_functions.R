@@ -227,7 +227,6 @@ mutate.SummarizedExperiment <- function(.data, axis, ...){
   update_metadata_se(.data, deparse(substitute(axis)), dplyr::mutate, ...)
 } 
 
-
 #####################################################################
 #################### Arithmetic operations  #########################
 #####################################################################
