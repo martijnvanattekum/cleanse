@@ -5,8 +5,6 @@
 \title{Write a se to delim format}
 \usage{
 write_delim(se, path, delim = " ", assay_name = NULL)
-
-write_delim(se, path, delim = " ", assay_name = NULL)
 }
 \arguments{
 \item{se}{SummarizedExperiment to round}

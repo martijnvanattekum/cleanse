@@ -5,8 +5,6 @@
 \title{Write a se to csv format}
 \usage{
 write_csv(se, path, assay_name = NULL)
-
-write_csv(se, path, assay_name = NULL)
 }
 \arguments{
 \item{se}{SummarizedExperiment to round}

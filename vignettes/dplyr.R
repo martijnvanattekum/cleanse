@@ -5,7 +5,6 @@ knitr::opts_chunk$set(
 )
 
 ## ----message=FALSE-------------------------------------------------------
-#library(dplyr)
 library(SummarizedExperiment)
 library(cleanse)
 

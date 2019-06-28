@@ -16,10 +16,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
 #' @examples
 #' #filter the rows of the example se with genes from the IL group
 #' seq_se %>% filter(row, gene_group == "IL")
-#' @export
-filter <- function(se, axis, ...){UseMethod("filter")}
-
-#' @rdname filter 
+#' @importFrom dplyr filter
 #' @export
 filter.SummarizedExperiment <- function(se, axis, ...){
   subset_se(se, deparse(substitute(axis)), dplyr::filter, ...)
@@ -40,10 +37,7 @@ filter.SummarizedExperiment <- function(se, axis, ...){
 #' @examples
 #' #subset the first 10 cols of the se
 #' seq_se %>% slice(col, 1:10)
-#' @export
-slice <- function(se, axis, ...){UseMethod("slice")}
-
-#' @rdname slice 
+#' @importFrom dplyr slice
 #' @export
 slice.SummarizedExperiment <- function(se, axis, ...){
   subset_se(se, deparse(substitute(axis)), dplyr::slice, ...)
@@ -60,10 +54,7 @@ slice.SummarizedExperiment <- function(se, axis, ...){
 #' @examples
 #' # Arrange seq_se by gene_group and then gene_name
 #' seq_se %>% cleanse::arrange(row, gene_group, gene_name)
-#' @export
-arrange <- function(se, axis, ...){UseMethod("arrange")}
-
-#' @rdname arrange
+#' @importFrom dplyr arrange
 #' @export
 arrange.SummarizedExperiment <- function(se, axis, ...){
   subset_se(se, deparse(substitute(axis)), dplyr::arrange, ...)
@@ -78,10 +69,7 @@ arrange.SummarizedExperiment <- function(se, axis, ...){
 #' @examples
 #' #Sample 4 columns from seq_se with replacement
 #' seq_se %>% sample_n(col, size = 4, replace = TRUE)
-#' @export
-sample_n <- function(se, axis, ...){UseMethod("sample_n")}
-
-#' @rdname sample_n
+#' @importFrom dplyr sample_n
 #' @export
 sample_n.SummarizedExperiment <- function(se, axis, ...){
   subset_se(se, deparse(substitute(axis)), dplyr::sample_n, ...)
@@ -96,10 +84,7 @@ sample_n.SummarizedExperiment <- function(se, axis, ...){
 #' @examples
 #' #Sample half of the genes from seq_se
 #' seq_se %>% sample_frac(row, size = .5)
-#' @export
-sample_frac <- function(se, axis,...){UseMethod("sample_frac")}
-
-#' @rdname sample_frac
+#' @importFrom dplyr sample_frac
 #' @export
 sample_frac.SummarizedExperiment <- function(se, axis, ...){
   subset_se(se, deparse(substitute(axis)), dplyr::sample_frac, ...)
@@ -121,10 +106,7 @@ sample_frac.SummarizedExperiment <- function(se, axis, ...){
 #' @examples
 #' # remove the time variable after filtering for time == 0
 #' seq_se %>% filter(col, time == 0) %>% select(col, -time)
-#' @export
-select <- function(se, axis, ...){UseMethod("select")}
-
-#' @rdname select 
+#' @importFrom dplyr select
 #' @export
 select.SummarizedExperiment <- function(se, axis, ...){
   update_metadata_se(se, deparse(substitute(axis)), dplyr::select, ...)
@@ -147,10 +129,7 @@ select.SummarizedExperiment <- function(se, axis, ...){
 #' @examples
 #' # rename the time variable after changing it to minutes
 #' seq_se %>% mutate(col, time = (time * 60)) %>% rename(col, time_mins = time)
-#' @export
-rename <- function(se, axis, ...){UseMethod("rename")}
-
-#' @rdname rename 
+#' @importFrom dplyr rename
 #' @export
 rename.SummarizedExperiment <- function(se, axis, ...){
   update_metadata_se(se, deparse(substitute(axis)), dplyr::rename, ...)
@@ -172,10 +151,7 @@ rename.SummarizedExperiment <- function(se, axis, ...){
 #' @examples
 #' #Change the treatment time from hours to minutes
 #' seq_se %>% mutate(col, time = (time * 60))
-#' @export mutate
-mutate <- function(se, axis, ...){UseMethod("mutate")}
-
-#' @rdname mutate
+#' @importFrom dplyr mutate
 #' @export
 mutate.SummarizedExperiment <- function(se, axis, ...){
   update_metadata_se(se, deparse(substitute(axis)), dplyr::mutate, ...)
@@ -293,10 +269,7 @@ print_options <- function(se) {
 #' @examples
 #' # write the example se to csv
 #' seq_se %>% round(3) %>% write_csv("out.csv", "expression")
-#' @export
-write_csv <- function(se, path, assay_name = NULL){UseMethod("write_csv")}
-
-#' @rdname write_csv
+#' @importFrom readr write_csv 
 #' @export
 write_csv <- function(se, path, assay_name = NULL){ 
   if (is.null(assay_name) & length(SummarizedExperiment::assayNames(se)) == 1){
@@ -315,10 +288,7 @@ write_csv <- function(se, path, assay_name = NULL){
 #' @examples
 #' # write the example se to tsv
 #' seq_se %>% round(3) %>% write_tsv("out.tsv", "expression")
-#' @export
-write_tsv <- function(se, path, assay_name = NULL){UseMethod("write_tsv")}
-
-#' @rdname write_tsv
+#' @importFrom readr write_tsv
 #' @export
 write_tsv <- function(se, path, assay_name = NULL){ 
   if (is.null(assay_name) & length(SummarizedExperiment::assayNames(se)) == 1){
@@ -338,10 +308,7 @@ write_tsv <- function(se, path, assay_name = NULL){
 #' @examples
 #' # write the example se to delim file, defaulting to " " as delimiter
 #' seq_se %>% round(3) %>% write_delim("out.txt", assay_name = "expression")
-#' @export
-write_delim <- function(se, path, delim = " ", assay_name = NULL){UseMethod("write_delim")}
-
-#' @rdname write_delim
+#' @importFrom readr write_delim
 #' @export
 write_delim <- function(se, path, delim = " ", assay_name = NULL){
   if (is.null(assay_name) & length(SummarizedExperiment::assayNames(se)) == 1){
