@@ -2,6 +2,10 @@
 ##' @export
 dplyr::slice
 
+##' @importFrom dplyr slice_sample
+##' @export
+dplyr::slice_sample
+
 ##' @importFrom dplyr rename
 ##' @export
 dplyr::rename

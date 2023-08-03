@@ -30,9 +30,9 @@ seq_se_reordered <- seq_se %>% arrange(row, gene_name, gene_group)
 #SummarizedExperiment::rowData(seq_se_reordered)
 
 ## -----------------------------------------------------------------------------
-seq_se %>% sample_n_row(4, replace = TRUE) #note the change in dim
+slice_sample(seq_se, col, n=3)#note the change in dim
 
-seq_se %>% sample_frac_row(.5) #note the change in dim
+slice_sample(seq_se, row, prop=.2) #note the change in dim
 
 ## -----------------------------------------------------------------------------
 # remove the time variable after filtering for time == 0

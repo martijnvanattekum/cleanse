@@ -444,14 +444,11 @@ by gene_group.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>seq_se_reordered <span class="ot">&lt;-</span> seq_se <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(row, gene_name, gene_group)</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#SummarizedExperiment::rowData(seq_se)</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#SummarizedExperiment::rowData(seq_se_reordered)</span></span></code></pre></div>
-<p>The extended <code>sample_n_&lt;row/col&gt;</code> and
-<code>sample_frac_&lt;row/col&gt;</code> functions filter n random
-rows/cols or a random fraction respectively. Note that the axis argument
-is included in the function name to avoid a mismatch in arguments with
-the dplyr generic.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>seq_se <span class="sc">%&gt;%</span> <span class="fu">sample_n_row</span>(<span class="dv">4</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>) <span class="co">#note the change in dim</span></span>
+<p>The slice_sample() function behaves similar to dplyr’s equivalent by
+selecting random rows or cols:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">slice_sample</span>(seq_se, col, <span class="at">n=</span><span class="dv">3</span>)<span class="co">#note the change in dim</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; class: SummarizedExperiment </span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; dim: 4 48 </span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; dim: 10 3 </span></span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; assays(2): expression copy_number</span></span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; rownames: NULL</span></span>
@@ -459,9 +456,9 @@ the dplyr generic.</p>
 <span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; colnames: NULL</span></span>
 <span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; colData names(4): patient site time treatment</span></span>
 <span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>seq_se <span class="sc">%&gt;%</span> <span class="fu">sample_frac_row</span>(.<span class="dv">5</span>) <span class="co">#note the change in dim</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="fu">slice_sample</span>(seq_se, row, <span class="at">prop=</span>.<span class="dv">2</span>) <span class="co">#note the change in dim</span></span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; class: SummarizedExperiment </span></span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; dim: 0 48 </span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; dim: 2 48 </span></span>
 <span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; metadata(0):</span></span>
 <span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; assays(2): expression copy_number</span></span>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; rownames: NULL</span></span>

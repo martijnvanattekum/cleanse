@@ -43,6 +43,31 @@ slice.SummarizedExperiment <- function(.data, axis, ...){
   subset_se(.data, deparse(substitute(axis)), dplyr::slice, ...)
 }
 
+#' Randomly selects rows or columns
+#' 
+#' Uses a slice operation to subset
+#' @param .data SummarizedExperiment to subset
+#' @param axis The axis to perform the operation on. Either row or col.
+#' @param ... Arguments passed to dplyr::slice_sample
+#' @param n  See prop
+#' @param prop Provide either n, the number of rows, or prop, the proportion of 
+#' rows to select. If neither are supplied, n = 1 will be used. If n is greater 
+#' than the number of rows in the group (or prop > 1), the result will be 
+#' silently truncated to the group size. prop will be rounded towards zero to 
+#' generate an integer number of rows. A negative value of n or prop will be 
+#' subtracted from the group size. For example, n = -2 with a group of 5 rows 
+#' will select 5 - 2 = 3 rows; prop = -0.25 with 8 rows will select 8 * (1 - 0.25) = 6 rows.
+#' @examples
+#' # subset 5 random columns
+#' seq_se %>% slice_sample(col, n=5)
+#' # randomly subset 20% of rows
+#' seq_se %>% slice_sample(row, prop=.2)
+#' @importFrom dplyr slice
+#' @export
+slice_sample.SummarizedExperiment <- function(.data, axis, ..., n, prop){
+  subset_se(.data, deparse(substitute(axis)), dplyr::slice_sample, ..., n=n, prop=prop)
+}
+
 #' Arrange by variables
 #' 
 #' Order either rows or cols from se by an expression involving its variables.
@@ -59,106 +84,6 @@ slice.SummarizedExperiment <- function(.data, axis, ...){
 arrange.SummarizedExperiment <- function(.data, axis, ...){
   subset_se(.data, deparse(substitute(axis)), dplyr::arrange, ...)
 }
-
-#' Sample n rows from a se
-#' 
-#' Selects random rows
-#' @param tbl SummarizedExperiment to sample
-#' @param size The number of rows to select
-#' @param replace Sample with or without replacement?
-#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
-#' numbers the same length as the input. Weights are automatically standardised to 
-#' sum to 1.
-#'
-#' This argument is automatically quoted and later evaluated in the context of the 
-#' data frame. It supports unquoting. See vignette("programming") for an introduction 
-#' to these concepts.
-#' @param ... ignored
-#' @examples
-#' #Sample 4 rows from seq_se with replacement
-#' seq_se %>% sample_n_row(size = 4, replace = TRUE)
-#' @export
-sample_n_row <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  UseMethod("sample_n_row")}
-
-#' @export
-sample_n_row.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  tbl[sample.int(nrow(tbl), size = size, replace = replace, prob = weight),]}
-  
-#' Sample n cols from a se
-#' 
-#' Selects random cols
-#' @param tbl SummarizedExperiment to sample
-#' @param size The number of cols to select
-#' @param replace Sample with or without replacement?
-#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
-#' numbers the same length as the input. Weights are automatically standardised to 
-#' sum to 1.
-#'
-#' This argument is automatically quoted and later evaluated in the context of the 
-#' data frame. It supports unquoting. See vignette("programming") for an introduction 
-#' to these concepts.
-#' @param ... ignored
-#' @examples
-#' #Sample 4 columns from seq_se with replacement
-#' seq_se %>% sample_n_col(4, replace = TRUE)
-#' @export
-sample_n_col <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  UseMethod("sample_n_col")}
-
-#' @export
-sample_n_col.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  tbl[,sample.int(ncol(tbl), size = size, replace = replace, prob = weight)]}
-
-#' Sample a fraction of rows from a se
-#' 
-#' Selects a random fraction of rows
-#' @param tbl SummarizedExperiment to sample
-#' @param size The fraction of rows to select
-#' @param replace Sample with or without replacement?
-#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
-#' numbers the same length as the input. Weights are automatically standardised to 
-#' sum to 1.
-#'
-#' This argument is automatically quoted and later evaluated in the context of the 
-#' data frame. It supports unquoting. See vignette("programming") for an introduction 
-#' to these concepts.
-#' @param ... ignored
-#' @examples
-#' #Sample half of the rows
-#' seq_se %>% sample_frac_row(size = .5)
-#' @export
-sample_frac_row <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  UseMethod("sample_frac_row")}
-
-#' @export
-sample_frac_row.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  tbl[sample.int(nrow(tbl), size = size, replace = replace, prob = weight),]}
-
-#' Sample a fraction of cols from a se
-#' 
-#' Selects a random fraction of cols
-#' @param tbl SummarizedExperiment to sample
-#' @param size The fraction of cols to select
-#' @param replace Sample with or without replacement?
-#' @param weight Sampling weights. This must evaluate to a vector of non-negative 
-#' numbers the same length as the input. Weights are automatically standardised to 
-#' sum to 1.
-#'
-#' This argument is automatically quoted and later evaluated in the context of the 
-#' data frame. It supports unquoting. See vignette("programming") for an introduction 
-#' to these concepts.
-#' @param ... ignored
-#' @examples
-#' #Sample half of the columns
-#' seq_se %>% sample_frac_col(size = .5)
-#' @export
-sample_frac_col <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  UseMethod("sample_frac_col")}
-
-#' @export
-sample_frac_col.SummarizedExperiment <- function(tbl, size, replace = FALSE, weight = NULL, ...){
-  tbl[,sample.int(ncol(tbl), size = size, replace = replace, prob = weight)]}
 
 #' Select variables by name for rowData or colData
 #' 

@@ -76,13 +76,12 @@ seq_se_reordered <- seq_se %>% arrange(row, gene_name, gene_group)
 #SummarizedExperiment::rowData(seq_se_reordered)
 ```
 
-The extended `sample_n_<row/col>` and `sample_frac_<row/col>` functions filter n 
-random rows/cols or a random fraction respectively. Note that the axis argument is
-included in the function name to avoid a mismatch in arguments with the dplyr generic.
+The slice_sample() function behaves similar to dplyr's equivalent by selecting
+random rows or cols:
 ```{r}
-seq_se %>% sample_n_row(4, replace = TRUE) #note the change in dim
+slice_sample(seq_se, col, n=3)#note the change in dim
 
-seq_se %>% sample_frac_row(.5) #note the change in dim
+slice_sample(seq_se, row, prop=.2) #note the change in dim
 ```
 
 ## Using dplyr functions to change the se's metadata
