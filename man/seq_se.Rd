@@ -4,7 +4,9 @@
 \name{seq_se}
 \alias{seq_se}
 \title{Example sequencing SummarizedExperiment}
-\format{A SummarizedExperiment}
+\format{
+A SummarizedExperiment
+}
 \usage{
 seq_se
 }

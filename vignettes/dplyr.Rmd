@@ -33,15 +33,7 @@ To get an overview of the different options available in the se, use `print_opti
 ```{r message=FALSE}
 library(cleanse)
 ```
-```{r message=FALSE, echo = FALSE}
-#detach to avoid conflicts with rename and slice functions when building vignettes
-detach("package:SummarizedExperiment") 
-detach("package:DelayedArray") 
-detach("package:GenomicRanges") 
-detach("package:GenomeInfoDb") 
-detach("package:IRanges") 
-detach("package:S4Vectors") 
-```
+
 ```{r}
 print_options(seq_se)
 ```
@@ -73,7 +65,7 @@ dim(sample_subset_se)
 
 To subset a se by position, `slice` can be used:
 ```{r}
-seq_se %>% slice(col, 1:10) #select the first 10 columns
+seq_se %>% slice(axis=col, 1:10) #select the first 10 columns
 ```
 
 `arrange` is used to consecutively sort a data frame by a variable. In this case, 

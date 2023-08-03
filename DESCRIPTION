@@ -18,7 +18,7 @@ Imports:
 Depends:
   dplyr (>= 0.7),
   R (>= 2.10)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.3
 Suggests:
     knitr
 VignetteBuilder: knitr
