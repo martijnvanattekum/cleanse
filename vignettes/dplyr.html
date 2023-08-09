@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martijn van Attekum" />
 
-<meta name="date" content="2023-08-03" />
+<meta name="date" content="2023-08-09" />
 
 <title>Manipulating SummarizedExperiments with dplyr functions</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Manipulating SummarizedExperiments with
 dplyr functions</h1>
 <h4 class="author">Martijn van Attekum</h4>
-<h4 class="date">2023-08-03</h4>
+<h4 class="date">2023-08-09</h4>
 
 
 
@@ -441,9 +441,7 @@ concurrently with the update of the colData/rowData.</p>
 <p><code>arrange</code> is used to consecutively sort a data frame by a
 variable. In this case, we arrange the rows, first by gene_name and next
 by gene_group.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>seq_se_reordered <span class="ot">&lt;-</span> seq_se <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(row, gene_name, gene_group)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#SummarizedExperiment::rowData(seq_se)</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#SummarizedExperiment::rowData(seq_se_reordered)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>seq_se_reordered <span class="ot">&lt;-</span> seq_se <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(row, gene_name, gene_group)</span></code></pre></div>
 <p>The slice_sample() function behaves similar to dplyr’s equivalent by
 selecting random rows or cols:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">slice_sample</span>(seq_se, col, <span class="at">n=</span><span class="dv">3</span>)<span class="co">#note the change in dim</span></span>
@@ -517,8 +515,7 @@ do</p>
 <p>or to combine the gene groups and gene names to one new variable in
 the rowData</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>seq_se_gene_comb <span class="ot">&lt;-</span> seq_se <span class="sc">%&gt;%</span> </span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">mutate</span>(row, <span class="at">group_and_name =</span> <span class="fu">paste</span>(gene_group, gene_name, <span class="at">sep =</span> <span class="st">&quot;_&quot;</span>))</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#SummarizedExperiment::rowData(seq_se_gene_comb)$group_and_name</span></span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">mutate</span>(row, <span class="at">group_and_name =</span> <span class="fu">paste</span>(gene_group, gene_name, <span class="at">sep =</span> <span class="st">&quot;_&quot;</span>))</span></code></pre></div>
 <p>A non-dplyr function that will change the metadata is
 <code>drop_metadata</code>: This function will drop all rowData and
 colData variables that have only 1 value. Typically used after

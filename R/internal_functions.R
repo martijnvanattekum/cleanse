@@ -19,8 +19,10 @@ printdata <- function(.data){
 subset_se <- function(se, axis, fun, ...){
   if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
   
-  idx <- {if (axis == "row") SummarizedExperiment::rowData(se) else (SummarizedExperiment::colData(se))} %>% 
-    as.data.frame %>% 
+  .extract_fun <- if (axis == "row") get_row_data else get_col_data
+  
+  idx <- se %>% 
+    .extract_fun() %>% 
     dplyr::mutate(idx = 1:nrow(.)) %>% 
     fun(...) %>% 
     dplyr::pull(idx)
@@ -30,16 +32,21 @@ subset_se <- function(se, axis, fun, ...){
 
 #changes metadata
 update_metadata_se <- function(se, axis, fun, ...) {
+  
   if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
-  coldt <- SummarizedExperiment::colData(se) %>% {if (axis == "row") . else fun(as.data.frame(.), ...)}
-  rowdt <- SummarizedExperiment::rowData(se) %>% {if (axis == "col") . else fun(as.data.frame(.), ...)}
-  SummarizedExperiment::SummarizedExperiment(assays = SummarizedExperiment::assays(se), 
-                                             colData = coldt, 
-                                             rowData = rowdt)
-}
+  
+  se_copy <- se
+  coldt <- get_col_data(se_copy) %>% {if (axis == "row") . else fun(., ...)}
+  rowdt <- get_row_data(se_copy) %>% {if (axis == "col") . else fun(., ...)}
+  se_copy %>% 
+    set_col_data(coldt) %>% 
+    set_row_data(rowdt)
+
+  }
 
 #changes assays
 update_assays_se <- function(se, assays) {
+
   SummarizedExperiment::SummarizedExperiment(assays = assays, 
                                              colData = SummarizedExperiment::colData(se), 
                                              rowData = SummarizedExperiment::rowData(se))
@@ -47,14 +54,16 @@ update_assays_se <- function(se, assays) {
 
 #perform arithmic to 2 equal-sized se's
 arith_se <- function(se1, se2, fun) {
+  
   if (!identical(SummarizedExperiment::assayNames(se1), SummarizedExperiment::assayNames(se2)))warning("The assay names of se1 and se2 are not the same")
-  if (!identical(SummarizedExperiment::colData(se1), SummarizedExperiment::colData(se2)))warning("The colData of se1 and se2 is not the same") 
-  if (!identical(SummarizedExperiment::rowData(se1), SummarizedExperiment::rowData(se2)))warning("The rowData of se1 and se2 is not the same") 
+  if (!identical(get_col_data(se1), get_col_data(se2)))warning("The colData of se1 and se2 is not the same") 
+  if (!identical(get_row_data(se1), get_row_data(se2)))warning("The rowData of se1 and se2 is not the same") 
   assays <- lapply(SummarizedExperiment::assayNames(se1), 
                    function(name) fun(SummarizedExperiment::assays(se1)[[name]], 
                                       SummarizedExperiment::assays(se2)[[name]])) %>% 
     `names<-`(SummarizedExperiment::assayNames(se1))
   update_assays_se(se1, assays)
+  
 }
 
 #create a df with all char cols from a df, list or matrix. Helper function for get_delim_df
@@ -68,8 +77,8 @@ as.char.df <- function(.data) {
 #returns a writable df based on each assay in the se
 get_delim_df <- function(se, assay_name = NULL) {
 
-  coldt <- SummarizedExperiment::colData(se) %>% as.char.df()
-  rowdt <- SummarizedExperiment::rowData(se) %>% as.char.df()
+  coldt <- get_col_data(se) %>% as.char.df()
+  rowdt <- get_row_data(se) %>% as.char.df()
   assay <- SummarizedExperiment::assays(se)[[assay_name]] %>% as.char.df() %>% 
     `colnames<-`(paste0("X", 1:ncol(.))) %>% #conforms with names from the header df
     `rownames<-`(NULL)

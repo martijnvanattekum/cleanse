@@ -249,9 +249,9 @@ print_options <- function(se) {
   cat(paste("** ASSAY OPTIONS FOR", deparse(substitute(se)), "** \n"))
   cat(paste(SummarizedExperiment::assayNames(se), collapse = ", "))
   cat(paste("\n\n** COLDATA OPTIONS FOR", deparse(substitute(se)), "** \n"))
-  printdata(SummarizedExperiment::colData(se))
+  printdata(get_col_data(se))
   cat(paste("\n** ROWDATA OPTIONS FOR", deparse(substitute(se)), "** \n"))
-  printdata(SummarizedExperiment::rowData(se))
+  printdata(get_row_data(se))
 }
 
 #' Write a se to csv format
@@ -323,8 +323,9 @@ write_delim <- function(se, path, delim = " ", assay_name = NULL){
 #' seq_se %>% filter(col, time == 4) %>% drop_metadata 
 #' @export
 drop_metadata <- function(se){
-  coldt <- SummarizedExperiment::colData(se) %>% as.data.frame() %>% .[, sapply(., function(col)length(unique(col)) > 1)]
-  rowdt <- SummarizedExperiment::rowData(se) %>% as.data.frame() %>% .[, sapply(., function(col)length(unique(col)) > 1)]
+  
+  coldt <- get_col_data(se) %>% .[, sapply(., function(col)length(unique(col)) > 1)]
+  rowdt <- get_row_data(se) %>% .[, sapply(., function(col)length(unique(col)) > 1)]
   SummarizedExperiment::SummarizedExperiment(assays = SummarizedExperiment::assays(se), 
                                              colData = coldt, 
                                              rowData = rowdt)
@@ -339,12 +340,12 @@ drop_metadata <- function(se){
 #' @importFrom tibble tibble
 #' @export
 get_col_data <- function(se) {
-  
+
   se %>% 
     SummarizedExperiment::colData() %>% 
     data.frame %>% 
     tibble::tibble()
-  
+    
 }
 
 

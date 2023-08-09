@@ -72,8 +72,6 @@ seq_se %>% slice(axis=col, 1:10) #select the first 10 columns
 we arrange the rows, first by gene_name and next by gene_group.
 ```{r}
 seq_se_reordered <- seq_se %>% arrange(row, gene_name, gene_group)
-#SummarizedExperiment::rowData(seq_se)
-#SummarizedExperiment::rowData(seq_se_reordered)
 ```
 
 The slice_sample() function behaves similar to dplyr's equivalent by selecting
@@ -110,7 +108,6 @@ or to combine the gene groups and gene names to one new variable in the rowData
 ```{r}
 seq_se_gene_comb <- seq_se %>% 
   mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
-#SummarizedExperiment::rowData(seq_se_gene_comb)$group_and_name
 ```
 
 A non-dplyr function that will change the metadata is `drop_metadata`: This function

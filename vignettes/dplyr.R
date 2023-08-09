@@ -26,8 +26,6 @@ seq_se %>% slice(axis=col, 1:10) #select the first 10 columns
 
 ## -----------------------------------------------------------------------------
 seq_se_reordered <- seq_se %>% arrange(row, gene_name, gene_group)
-#SummarizedExperiment::rowData(seq_se)
-#SummarizedExperiment::rowData(seq_se_reordered)
 
 ## -----------------------------------------------------------------------------
 slice_sample(seq_se, col, n=3)#note the change in dim
@@ -51,7 +49,6 @@ seq_se_mins$time
 ## -----------------------------------------------------------------------------
 seq_se_gene_comb <- seq_se %>% 
   mutate(row, group_and_name = paste(gene_group, gene_name, sep = "_"))
-#SummarizedExperiment::rowData(seq_se_gene_comb)$group_and_name
 
 ## -----------------------------------------------------------------------------
 seq_se_dropped <- seq_se %>% 
