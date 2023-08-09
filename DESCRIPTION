@@ -1,7 +1,7 @@
 Package: cleanse
 Type: Package
 Title: Tidyverse functions for SummarizedExperiment
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: person("Martijn", "van Attekum", email = "martijn.vanattekum@gmail.com",
                   role = c("aut", "cre"))
 Description: Extends the SummarizedExperiments class to use tidy methods such as select,
@@ -14,7 +14,11 @@ Imports:
   stringr (>= 1.2),
   readr (>= 1.3),
   magrittr (>= 1.5),
-  SummarizedExperiment (>= 1.1)
+  tibble (>= 3.0),
+  tidyr (>= 1.0),
+  SummarizedExperiment (>= 1.1),
+  S4Vectors (>= 0.30),
+  stats (>= 4.0)
 Depends:
   dplyr (>= 0.7),
   R (>= 2.10)
