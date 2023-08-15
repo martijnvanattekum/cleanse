@@ -1,0 +1,48 @@
+---
+title: "Accessors for SummarizedExperiments"
+author: "Martijn van Attekum"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Accessors for SummarizedExperiments}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The SummarizedExperiment's native col- and rowdata accessor functions 
+(colData and rowData) have a number of non-tidyverse compliances:
+
+* They return or require a DFrame object instead of a tibble
+* When setting col-/rowdata they cannot be easily used in a pipe
+
+cleanse offers pipe-friendly accessor functions that work with tibbles
+
+```{r message=FALSE}
+library(cleanse)
+```
+```{r}
+data(seq_se)
+# Get the coldata as a tibble
+get_col_data(seq_se)
+
+# generate new rowdata and create a new se with the rowdata set
+new_rd <- get_row_data(seq_se) %>% 
+  tidyr::unite(gene_group_name, c(gene_group, gene_name))
+se_new_rowdata <- set_row_data(seq_se, new_rd)
+```
+
+A frequently used piece of data from an se is the options contained in its
+coldata. cleanse offers an accessor function for this purpose:
+```{r}
+options_from_coldata(seq_se, "site")
+```
+```{r}
+sessionInfo()
+```
