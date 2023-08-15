@@ -10,6 +10,9 @@ A SummarizedExperiment
 \usage{
 seq_se
 }
+\value{
+A SummarizedExperiment
+}
 \description{
 Toy example SummarizedExperiment containing expression and copy number values for 
 10 genes and 48 different conditions. The 10 genes are grouped in 3 gene groups.

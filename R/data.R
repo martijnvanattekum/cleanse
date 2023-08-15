@@ -7,4 +7,5 @@
 #' Use print_options(seq_se) to get an overview.
 #' 
 #' @format A SummarizedExperiment
+#' @returns A SummarizedExperiment
 "seq_se"

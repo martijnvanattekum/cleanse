@@ -11,6 +11,9 @@
 \alias{filter}
 \alias{mutate}
 \title{Objects exported from other packages}
+\value{
+tibble
+}
 \keyword{internal}
 \description{
 These objects are imported from other packages. Follow the links
