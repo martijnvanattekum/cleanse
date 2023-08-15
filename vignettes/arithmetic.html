@@ -1,87 +1,118 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Martijn van Attekum" />
 
-<meta name="date" content="2019-06-28" />
+<meta name="date" content="2023-08-15" />
 
 <title>Arithmetic operations on SummarizedExperiments</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {  }
+{ }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -90,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -104,6 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -117,9 +156,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -288,7 +324,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -301,68 +338,129 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 
-<h1 class="title toc-ignore">Arithmetic operations on SummarizedExperiments</h1>
+<h1 class="title toc-ignore">Arithmetic operations on
+SummarizedExperiments</h1>
 <h4 class="author">Martijn van Attekum</h4>
-<h4 class="date">2019-06-28</h4>
+<h4 class="date">2023-08-15</h4>
 
 
 
-<p>Occasionally, we want to perform arithmetic operations on the values contained in 2 se’s, for instance when subtracting control values from treated values.</p>
-<p>If we want to subtract the values from time == 0 from the values at time == 4, this can be achieved with a combination of <code>filter</code> and <code>-</code>.<br />
-Arithmetic operations require the se’s to have the same ColData and rowData. To ensure the colData is the same, we have to:</p>
+<p>Occasionally, we want to perform arithmetic operations on the values
+contained in 2 se’s, for instance when subtracting control values from
+treated values.</p>
+<p>If we want to subtract the values from time == 0 from the values at
+time == 4, this can be achieved with a combination of
+<code>filter</code> and <code>-</code>.<br />
+Arithmetic operations require the se’s to have the same ColData and
+rowData. To ensure the colData is the same, we have to:</p>
 <ul>
-<li>remove the time information from colData using the <code>select</code> function</li>
-<li>rearrange the data by patient, then site, then treatment (although not strictly necessary for the example se)</li>
+<li>remove the time information from colData using the
+<code>select</code> function</li>
+<li>rearrange the data by patient, then site, then treatment (although
+not strictly necessary for the example se)</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(SummarizedExperiment)</a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(cleanse)</a></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">seq_se_t0 &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(col, time <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="st">  </span><span class="kw">select</span>(col, <span class="op">-</span>time) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="st">  </span><span class="kw">arrange</span>(col, patient, site, treatment)</a>
-<a class="sourceLine" id="cb2-4" title="4"><span class="kw">assay</span>(seq_se_t0)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]     [,5]</span></a>
-<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; [1,] 15.052851 11.881988 22.881547 11.467049 16.03225</span></a>
-<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; [2,]  4.876098  2.404972 11.435766 19.046400 22.25672</span></a>
-<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt; [3,] 24.161468 15.832220 23.026848 12.159250 19.11502</span></a>
-<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; [4,] 16.272638 16.660169  6.477970 18.317787 20.86950</span></a>
-<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt; [5,]  9.176797 10.141590  8.594452  0.199231 24.83814</span></a>
-<a class="sourceLine" id="cb2-11" title="11">seq_se_t4 &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(col, time <span class="op">==</span><span class="st"> </span><span class="dv">4</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-12" title="12"><span class="st">  </span><span class="kw">select</span>(col, <span class="op">-</span>time) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb2-13" title="13"><span class="st">  </span><span class="kw">arrange</span>(col, patient, site, treatment)</a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="kw">assay</span>(seq_se_t4)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="co">#&gt;           [,1]      [,2]     [,3]      [,4]      [,5]</span></a>
-<a class="sourceLine" id="cb2-16" title="16"><span class="co">#&gt; [1,] 15.434449 16.029647 12.53175 19.837960 12.100908</span></a>
-<a class="sourceLine" id="cb2-17" title="17"><span class="co">#&gt; [2,]  7.499163 21.517809 17.43825  2.720085 17.485132</span></a>
-<a class="sourceLine" id="cb2-18" title="18"><span class="co">#&gt; [3,]  8.361128 21.121566 24.75573 11.890398 12.204261</span></a>
-<a class="sourceLine" id="cb2-19" title="19"><span class="co">#&gt; [4,]  3.097969  5.679155 19.56254 23.681155 18.924928</span></a>
-<a class="sourceLine" id="cb2-20" title="20"><span class="co">#&gt; [5,]  6.946594 19.079302 14.03247 17.526090  2.837707</span></a>
-<a class="sourceLine" id="cb2-21" title="21">seq_se_diff &lt;-<span class="st"> </span>seq_se_t4 <span class="op">-</span><span class="st"> </span>seq_se_t0</a>
-<a class="sourceLine" id="cb2-22" title="22"><span class="kw">assay</span>(seq_se_diff)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb2-23" title="23"><span class="co">#&gt;             [,1]       [,2]       [,3]        [,4]       [,5]</span></a>
-<a class="sourceLine" id="cb2-24" title="24"><span class="co">#&gt; [1,]   0.3815981   4.147659 -10.349801   8.3709113  -3.931341</span></a>
-<a class="sourceLine" id="cb2-25" title="25"><span class="co">#&gt; [2,]   2.6230645  19.112837   6.002484 -16.3263145  -4.771592</span></a>
-<a class="sourceLine" id="cb2-26" title="26"><span class="co">#&gt; [3,] -15.8003400   5.289347   1.728882  -0.2688523  -6.910758</span></a>
-<a class="sourceLine" id="cb2-27" title="27"><span class="co">#&gt; [4,] -13.1746691 -10.981014  13.084575   5.3633683  -1.944574</span></a>
-<a class="sourceLine" id="cb2-28" title="28"><span class="co">#&gt; [5,]  -2.2302034   8.937712   5.438022  17.3268594 -22.000435</span></a></code></pre></div>
-<p>Similarly, functions for <code>+</code>, <code>/</code>, and <code>*</code>, can be used.</p>
-<p>In addition, a method to round the values from all assays is provided:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">seq_se_rounded &lt;-<span class="st"> </span>seq_se <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">round</span>(<span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="kw">assay</span>(seq_se)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]</span></a>
-<a class="sourceLine" id="cb3-4" title="4"><span class="co">#&gt; [1,] 15.052851  2.616734 20.093185 12.463968 22.881547</span></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="co">#&gt; [2,]  4.876098 16.153773 19.833649  6.418567 11.435766</span></a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="co">#&gt; [3,] 24.161468 12.727260  8.939078 12.291736 23.026848</span></a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="co">#&gt; [4,] 16.272638 17.665714  1.450027  2.936897  6.477970</span></a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="co">#&gt; [5,]  9.176797 21.557841 14.143654 12.820156  8.594452</span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="kw">assay</span>(seq_se_rounded)[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a>
-<a class="sourceLine" id="cb3-10" title="10"><span class="co">#&gt;        [,1]   [,2]   [,3]   [,4]   [,5]</span></a>
-<a class="sourceLine" id="cb3-11" title="11"><span class="co">#&gt; [1,] 15.053  2.617 20.093 12.464 22.882</span></a>
-<a class="sourceLine" id="cb3-12" title="12"><span class="co">#&gt; [2,]  4.876 16.154 19.834  6.419 11.436</span></a>
-<a class="sourceLine" id="cb3-13" title="13"><span class="co">#&gt; [3,] 24.161 12.727  8.939 12.292 23.027</span></a>
-<a class="sourceLine" id="cb3-14" title="14"><span class="co">#&gt; [4,] 16.273 17.666  1.450  2.937  6.478</span></a>
-<a class="sourceLine" id="cb3-15" title="15"><span class="co">#&gt; [5,]  9.177 21.558 14.144 12.820  8.594</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(cleanse)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">data</span>(seq_se)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>seq_se_t0 <span class="ot">&lt;-</span> seq_se <span class="sc">%&gt;%</span> <span class="fu">filter</span>(col, time <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">select</span>(col, <span class="sc">-</span>time) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="fu">arrange</span>(col, patient, site, treatment)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">assay</span>(seq_se_t0)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]     [,5]</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; [1,] 15.052851 11.881988 22.881547 11.467049 16.03225</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; [2,]  4.876098  2.404972 11.435766 19.046400 22.25672</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; [3,] 24.161468 15.832220 23.026848 12.159250 19.11502</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; [4,] 16.272638 16.660169  6.477970 18.317787 20.86950</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; [5,]  9.176797 10.141590  8.594452  0.199231 24.83814</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>seq_se_t4 <span class="ot">&lt;-</span> seq_se <span class="sc">%&gt;%</span> <span class="fu">filter</span>(col, time <span class="sc">==</span> <span class="dv">4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="fu">select</span>(col, <span class="sc">-</span>time) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="fu">arrange</span>(col, patient, site, treatment)</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="fu">assay</span>(seq_se_t4)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt;           [,1]      [,2]     [,3]      [,4]      [,5]</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; [1,] 15.434449 16.029647 12.53175 19.837960 12.100908</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; [2,]  7.499163 21.517809 17.43825  2.720085 17.485132</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; [3,]  8.361128 21.121566 24.75573 11.890398 12.204261</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; [4,]  3.097969  5.679155 19.56254 23.681155 18.924928</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; [5,]  6.946594 19.079302 14.03247 17.526090  2.837707</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>seq_se_diff <span class="ot">&lt;-</span> seq_se_t4 <span class="sc">-</span> seq_se_t0</span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="fu">assay</span>(seq_se_diff)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt;             [,1]       [,2]       [,3]        [,4]       [,5]</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt; [1,]   0.3815981   4.147659 -10.349801   8.3709113  -3.931341</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; [2,]   2.6230645  19.112837   6.002484 -16.3263145  -4.771592</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt; [3,] -15.8003400   5.289347   1.728882  -0.2688523  -6.910758</span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt; [4,] -13.1746691 -10.981014  13.084575   5.3633683  -1.944574</span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt; [5,]  -2.2302034   8.937712   5.438022  17.3268594 -22.000435</span></span></code></pre></div>
+<p>Similarly, functions for <code>+</code>, <code>/</code>, and
+<code>*</code>, can be used.</p>
+<p>In addition, a method to round the values from all assays is
+provided:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>seq_se_rounded <span class="ot">&lt;-</span> seq_se <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">assay</span>(seq_se)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; [1,] 15.052851  2.616734 20.093185 12.463968 22.881547</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; [2,]  4.876098 16.153773 19.833649  6.418567 11.435766</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; [3,] 24.161468 12.727260  8.939078 12.291736 23.026848</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; [4,] 16.272638 17.665714  1.450027  2.936897  6.477970</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; [5,]  9.176797 21.557841 14.143654 12.820156  8.594452</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="fu">assay</span>(seq_se_rounded)[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;        [,1]   [,2]   [,3]   [,4]   [,5]</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; [1,] 15.053  2.617 20.093 12.464 22.882</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; [2,]  4.876 16.154 19.834  6.419 11.436</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; [3,] 24.161 12.727  8.939 12.292 23.027</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; [4,] 16.273 17.666  1.450  2.937  6.478</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; [5,]  9.177 21.558 14.144 12.820  8.594</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; Platform: x86_64-apple-darwin20 (64-bit)</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; Running under: macOS Ventura 13.4.1</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; Matrix products: default</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; locale:</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; [1] C/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; time zone: Europe/Berlin</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; tzcode source: internal</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; attached base packages:</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; [8] base     </span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt;  [1] SummarizedExperiment_1.31.1 Biobase_2.61.0             </span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt;  [3] GenomicRanges_1.53.1        GenomeInfoDb_1.37.2        </span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt;  [5] IRanges_2.35.2              S4Vectors_0.39.1           </span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt;  [7] BiocGenerics_0.47.0         MatrixGenerics_1.13.1      </span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt;  [9] matrixStats_1.0.0           cleanse_0.99.0             </span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; [11] dplyr_1.1.2                </span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt;  [1] sass_0.4.7              utf8_1.2.3              generics_0.1.3         </span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt;  [4] tidyr_1.3.0             SparseArray_1.1.11      bitops_1.0-7           </span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt;  [7] xml2_1.3.5              stringi_1.7.12          lattice_0.21-8         </span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co">#&gt; [10] digest_0.6.33           hms_1.1.3               magrittr_2.0.3         </span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; [13] evaluate_0.21           grid_4.3.1              fastmap_1.1.1          </span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; [16] pkgload_1.3.2.1         jsonlite_1.8.7          rprojroot_2.0.3        </span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#&gt; [19] Matrix_1.6-1            purrr_1.0.2             fansi_1.0.4            </span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="co">#&gt; [22] jquerylib_0.1.4         abind_1.4-5             cli_3.6.1              </span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#&gt; [25] rlang_1.1.1             crayon_1.5.2            XVector_0.41.1         </span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt; [28] cachem_1.0.8            yaml_2.3.7              withr_2.5.0            </span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; [31] DelayedArray_0.27.10    S4Arrays_1.1.5          tools_4.3.1            </span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt; [34] tzdb_0.4.0              GenomeInfoDbData_1.2.10 vctrs_0.6.3            </span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt; [37] R6_2.5.1                lifecycle_1.0.3         zlibbioc_1.47.0        </span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt; [40] stringr_1.5.0           pkgconfig_2.0.3         desc_1.4.2             </span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; [43] bslib_0.5.1             pillar_1.9.0            glue_1.6.2             </span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; [46] xfun_0.40               tibble_3.2.1            tidyselect_1.2.0       </span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; [49] rstudioapi_0.15.0       knitr_1.43              htmltools_0.5.6        </span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; [52] rmarkdown_2.24          readr_2.1.4             compiler_4.3.1         </span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; [55] roxygen2_7.2.3          RCurl_1.98-1.12</span></span></code></pre></div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

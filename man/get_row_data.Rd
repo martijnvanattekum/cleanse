@@ -9,9 +9,13 @@ get_row_data(se)
 \arguments{
 \item{se}{SummarizedExperiment}
 }
+\value{
+A tibble containing the rowdata of the SummarizedExperiment
+}
 \description{
 Gets row data from an se as a tibble
 }
 \examples{
+data(seq_se)
 get_row_data(seq_se)
 }

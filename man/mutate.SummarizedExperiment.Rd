@@ -12,11 +12,18 @@
 \item{axis}{The axis to perform the operation on. Either row or col.}
 
 \item{...}{Name-value pairs of expressions, each with length 1 or the same 
-length as the number of rows/cols in row- or colData. The name of each argument will 
+length as the number of rows/cols in row- or colData. The name of each 
+argument will 
 be the name of a new variable, and the value will be its corresponding value. 
-Use a NULL value in mutate to drop a variable. New variables overwrite existing variables of the same name.
-The arguments in ... are automatically quoted and evaluated in the context of the data frame. 
-They support unquoting and splicing. See vignette("programming") for an introduction to these concepts.}
+Use a NULL value in mutate to drop a variable. New variables overwrite 
+existing variables of the same name.
+The arguments in ... are automatically quoted and evaluated in the context 
+of the data frame. 
+They support unquoting and splicing. See vignette("programming") for an 
+introduction to these concepts.}
+}
+\value{
+A SummarizedExperiment after the mutate operation
 }
 \description{
 mutate() adds new variables and preserves existing ones; 
@@ -25,5 +32,6 @@ New variables overwrite existing variables of the same name.
 }
 \examples{
 #Change the treatment time from hours to minutes
+data(seq_se)
 seq_se \%>\% mutate(col, time = (time * 60))
 }

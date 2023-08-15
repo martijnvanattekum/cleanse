@@ -12,13 +12,19 @@
 \item{axis}{The axis to perform the operation on. Either row or col.}
 
 \item{...}{Logical predicates defined in terms of the variables in .data. 
-Multiple conditions are combined with & or ,. Only rows where the condition evaluates to TRUE are kept.}
+Multiple conditions are combined with & or ,. Only rows where the condition 
+evaluates to TRUE are kept.}
+}
+\value{
+A SummarizedExperiment after the filter operation
 }
 \description{
-Use filter() to choose rows/genes where conditions are true. Uses attached metadata
+Use filter() to choose rows/genes where conditions are true. Uses attached 
+metadata
 to find matches.
 }
 \examples{
 #filter the rows of the example se with genes from the IL group
+data(seq_se)
 seq_se \%>\% filter(row, gene_group == "IL")
 }

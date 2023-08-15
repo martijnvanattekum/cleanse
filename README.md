@@ -55,18 +55,20 @@ library(cleanse)
 # -- An example se called seq_se is provided
 
 # Example pipe
+data(seq_se)
 seq_se %>%
   filter(row, gene_group == "NOTCH") %>%
   filter(col, site %in% c("brain", "skin")) %>%
   arrange(col, patient) %>%
-  round(3) %>%
-  write_csv("expression", "out.csv")
+  round(3)
 
 # Example sampling
-seq_se %>% sample_n(row, 5)
+data(seq_se)
+seq_se %>% slice_sample(row, prop=.2)
 
 # Example arithmetic subtracting the expression values at T=0 from T=4
-(select(seq_se, time == 4)) - (select(seq_se, time == 0))
+data(seq_se)
+(select(seq_se, col, time == 4)) - (select(seq_se, col, time == 0))
 ```
 
 ## Getting help

@@ -8,6 +8,7 @@ knitr::opts_chunk$set(
 library(cleanse)
 
 ## -----------------------------------------------------------------------------
+data(seq_se)
 print_options(seq_se)
 
 ## -----------------------------------------------------------------------------
@@ -55,4 +56,7 @@ seq_se_dropped <- seq_se %>%
   filter(col, time == 4) %>% 
   drop_metadata()
 print_options(seq_se_dropped) #note the time variable from colData is dropped as all values were 4
+
+## -----------------------------------------------------------------------------
+sessionInfo()
 

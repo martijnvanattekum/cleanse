@@ -11,13 +11,17 @@ write_csv(se, path, assay_name = NULL)
 
 \item{path}{Path or connection to write to}
 
-\item{assay_name}{Name of the assay contained in se to write. Not required when 
-only 1 assay is contained in the se}
+\item{assay_name}{Name of the assay contained in se to write. Not required 
+when only 1 assay is contained in the se}
+}
+\value{
+The path to where the SummarizedExperiment was written
 }
 \description{
 Write a se to csv format
 }
 \examples{
 # write the example se to csv
+data(seq_se)
 seq_se \%>\% round(3) \%>\% write_csv("out.csv", "expression")
 }

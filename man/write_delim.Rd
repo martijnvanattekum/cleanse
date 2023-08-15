@@ -13,13 +13,18 @@ write_delim(se, path, delim = " ", assay_name = NULL)
 
 \item{delim}{Delimiter used to separate values}
 
-\item{assay_name}{Name of the assay contained in se to write. Not required when 
-only 1 assay is contained in the se}
+\item{assay_name}{Name of the assay contained in se to write. Not required 
+when only 1 assay is contained in the se}
+}
+\value{
+The path to where the SummarizedExperiment was written
 }
 \description{
-Rounds the values in all of the underlying assay matrices to the given number of digits
+Rounds the values in all of the underlying assay matrices to the given 
+number of digits
 }
 \examples{
 # write the example se to delim file, defaulting to " " as delimiter
+data(seq_se)
 seq_se \%>\% round(3) \%>\% write_delim("out.txt", assay_name = "expression")
 }

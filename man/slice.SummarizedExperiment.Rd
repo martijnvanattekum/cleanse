@@ -12,17 +12,23 @@
 \item{axis}{The axis to perform the operation on. Either row or col.}
 
 \item{...}{Integer row values. Provide either positive values to keep, or 
-negative values to drop. The values provided must be either all positive or all 
-negative. Indices beyond the number of rows in the input are silently ignored.
+negative values to drop. The values provided must be either all positive or 
+all negative. Indices beyond the number of rows in the input are silently 
+ignored.
 
 The arguments in ... are automatically quoted and evaluated in the context of 
-the data frame. They support unquoting and splicing. See vignette("programming") 
+the data frame. They support unquoting and splicing. See 
+vignette("programming") 
 for an introduction to these concepts.}
+}
+\value{
+A SummarizedExperiment after the slice operation
 }
 \description{
 Choose rows by their ordinal position in the se
 }
 \examples{
 #subset the first 10 cols of the se
+data(seq_se)
 seq_se \%>\% slice(col, 1:10)
 }

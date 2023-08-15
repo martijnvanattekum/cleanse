@@ -11,13 +11,18 @@ write_tsv(se, path, assay_name = NULL)
 
 \item{path}{Path or connection to write to}
 
-\item{assay_name}{Name of the assay contained in se to write. Not required when 
-only 1 assay is contained in the se}
+\item{assay_name}{Name of the assay contained in se to write. Not required 
+when only 1 assay is contained in the se}
+}
+\value{
+The path to where the SummarizedExperiment was written
 }
 \description{
-Rounds the values in all of the underlying assay matrices to the given number of digits
+Rounds the values in all of the underlying assay matrices to the given 
+number of digits
 }
 \examples{
 # write the example se to tsv
+data(seq_se)
 seq_se \%>\% round(3) \%>\% write_tsv("out.tsv", "expression")
 }

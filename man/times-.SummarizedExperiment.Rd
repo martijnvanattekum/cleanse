@@ -7,8 +7,12 @@
 \method{*}{SummarizedExperiment}(se1, se2)
 }
 \arguments{
-\item{se1, se2}{SummarizedExperiments for which se1 and se2 values will be multiplied.
+\item{se1, se2}{SummarizedExperiments for which se1 and se2 values will be 
+multiplied.
 Need to have the same rowData and colData}
+}
+\value{
+A SummarizedExperiment after the multiplication operation
 }
 \description{
 Multiplies the values from each of the underlying assay values for 2 se's.
@@ -16,6 +20,7 @@ Multiplies the values from each of the underlying assay values for 2 se's.
 \examples{
 #create subset se's for time == 0 and time == 4. Then add their values.
 #remove time to make colData the same
+data(seq_se)
 t0 <- seq_se \%>\% filter(col, time == 0) \%>\% select(col, -time)
 t4 <- seq_se \%>\% filter(col, time == 4) \%>\% select(col, -time)
 t4 * t0

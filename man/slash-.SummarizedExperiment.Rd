@@ -7,8 +7,12 @@
 \method{/}{SummarizedExperiment}(se1, se2)
 }
 \arguments{
-\item{se1, se2}{SummarizedExperiments for which se1 values will be divided by se2 values.
+\item{se1, se2}{SummarizedExperiments for which se1 values will be divided by 
+se2 values.
 Need to have the same rowData and colData}
+}
+\value{
+A SummarizedExperiment after the division operation
 }
 \description{
 Divides the values from each of the underlying assay values for 2 se's.
@@ -16,6 +20,7 @@ Divides the values from each of the underlying assay values for 2 se's.
 \examples{
 #create subset se's for time == 0 and time == 4. Then subtract their values.
 #remove time to make colData the same
+data(seq_se)
 t0 <- seq_se \%>\% filter(col, time == 0) \%>\% select(col, -time)
 t4 <- seq_se \%>\% filter(col, time == 4) \%>\% select(col, -time)
 t4 / t0

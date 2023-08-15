@@ -21,13 +21,18 @@ than the number of rows in the group (or prop > 1), the result will be
 silently truncated to the group size. prop will be rounded towards zero to 
 generate an integer number of rows. A negative value of n or prop will be 
 subtracted from the group size. For example, n = -2 with a group of 5 rows 
-will select 5 - 2 = 3 rows; prop = -0.25 with 8 rows will select 8 * (1 - 0.25) = 6 rows.}
+will select 5 - 2 = 3 rows; prop = -0.25 with 8 rows will select 
+8 * (1 - 0.25) = 6 rows.}
+}
+\value{
+A SummarizedExperiment after the sample operation
 }
 \description{
 Uses a slice operation to subset
 }
 \examples{
 # subset 5 random columns
+data(seq_se)
 seq_se \%>\% slice_sample(col, n=5)
 # randomly subset 20\% of rows
 seq_se \%>\% slice_sample(row, prop=.2)

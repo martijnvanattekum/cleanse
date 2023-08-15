@@ -28,6 +28,7 @@ library(SummarizedExperiment)
 library(cleanse)
 ```
 ```{r eval=FALSE}
+data(seq_se)
 seq_se %>% round(3) %>% write_csv("out.csv", "expression")
 ```
 When not providing a folder, the output is written to the current working directory.
@@ -41,4 +42,8 @@ EXPRESSION gene_group gene_name
                    IL     IL1R1 15.053  2.617 20.093 12.464 ...
                    IL     IL1R2  4.876 16.154 19.834  6.419 ...
                   ...       ...    ...    ...    ...    ... ...
+```
+
+```{r}
+sessionInfo()
 ```

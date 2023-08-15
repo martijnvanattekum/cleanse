@@ -11,10 +11,15 @@
 
 \item{digits}{integer indicating the number of decimal places}
 }
+\value{
+A SummarizedExperiment after the round operation
+}
 \description{
-Rounds the values in all of the underlying assay matrices to the given number of digits
+Rounds the values in all of the underlying assay matrices to the given 
+number of digits
 }
 \examples{
 # round the example se to 2 digits
+data(seq_se)
 seq_se \%>\% round(2)
 }

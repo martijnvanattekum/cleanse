@@ -9,10 +9,14 @@ print_options(se)
 \arguments{
 \item{se}{SummarizedExperiment to show information for}
 }
+\value{
+The input SummarizedExperiment
+}
 \description{
 Creates a print of all possible assays, rowData and colData
 }
 \examples{
 #show available options for the example se
+data(seq_se)
 print_options(seq_se)
 }

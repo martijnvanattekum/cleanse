@@ -9,9 +9,13 @@ get_col_data(se)
 \arguments{
 \item{se}{SummarizedExperiment}
 }
+\value{
+A tibble containing the coldata of the SummarizedExperiment
+}
 \description{
 Gets column data from an se as a tibble
 }
 \examples{
+data(seq_se)
 get_col_data(seq_se)
 }

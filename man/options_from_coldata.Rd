@@ -11,9 +11,13 @@ options_from_coldata(se, colname)
 
 \item{colname}{the column name (character) to extract options for}
 }
+\value{
+A vector containing the unique options for a coldata column
+}
 \description{
 Gets available options for a particular column of the coldata of an se
 }
 \examples{
+data(seq_se)
 options_from_coldata(seq_se, "site")
 }

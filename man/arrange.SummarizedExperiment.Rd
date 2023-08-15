@@ -15,10 +15,14 @@
 or expressions involving variable names. 
 Use desc() to sort a variable in descending order}
 }
+\value{
+A SummarizedExperiment after the filter operation
+}
 \description{
 Order either rows or cols from se by an expression involving its variables.
 }
 \examples{
 # Arrange seq_se by gene_group and then gene_name
+data(seq_se)
 seq_se \%>\% arrange(row, gene_group, gene_name)
 }

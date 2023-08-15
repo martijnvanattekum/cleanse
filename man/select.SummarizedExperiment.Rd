@@ -11,19 +11,32 @@
 
 \item{axis}{The axis to perform the operation on. Either row or col.}
 
-\item{...}{One or more unquoted expressions separated by commas. You can treat variable names like they are positions, so you can use expressions like x:y to select ranges of variables.
-Positive values select variables; negative values drop variables. If the first expression is negative, select() will automatically start with all variables.  
+\item{...}{One or more unquoted expressions separated by commas. You can 
+treat variable names like they are positions, so you can use expressions 
+like x:y to select ranges of variables.
+Positive values select variables; negative values drop variables. If the 
+first expression is negative, select() will automatically start with all 
+variables.  
 
 Use named arguments, e.g. new_name = old_name, to rename selected variables.  
 
-The arguments in ... are automatically quoted and evaluated in a context where column names represent column positions. They also support unquoting and splicing. See vignette("programming") for an introduction to these concepts.  
+The arguments in ... are automatically quoted and evaluated in a context 
+where column names represent column positions. They also support unquoting 
+and splicing. See vignette("programming") for an introduction to these 
+concepts.  
 
-See select helpers for more details and examples about tidyselect helpers such as starts_with(), everything(), ...}
+See select helpers for more details and examples about tidyselect helpers 
+such as starts_with(), everything(), ...}
+}
+\value{
+A SummarizedExperiment after the select operation
 }
 \description{
-Choose variables from the rowData or colData that you want to keep. Select drops all other variables.
+Choose variables from the rowData or colData that you want to keep. Select 
+drops all other variables.
 }
 \examples{
 # remove the time variable after filtering for time == 0
+data(seq_se)
 seq_se \%>\% filter(col, time == 0) \%>\% select(col, -time)
 }

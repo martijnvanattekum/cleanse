@@ -9,7 +9,12 @@ printdata <- function(.data){
   critnames <- names(df)
   maxlen <- critnames %>% nchar %>% max()
   for (critname in critnames){
-    line <- paste(stringr::str_pad(critname, maxlen), ":", (df[,critname] %>% unlist %>% unique %>% sort %>% paste(collapse = ", ")), "\n")
+    line <- paste(stringr::str_pad(critname, maxlen), ":", 
+                  (df[,critname] %>% 
+                     unlist %>% 
+                     unique %>% 
+                     sort %>% 
+                     paste(collapse = ", ")), "\n")
     if (nchar(line) > linelen) line <- paste0(substr(line, 1, linelen), "...\n")
     cat(line)
   }
@@ -17,13 +22,14 @@ printdata <- function(.data){
 
 #returns subset based on metadata
 subset_se <- function(se, axis, fun, ...){
-  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
+  if (!axis %in% c("row", "col")) {
+    stop("Argument axis needs to be either row or col")}
   
   .extract_fun <- if (axis == "row") get_row_data else get_col_data
   
   idx <- se %>% 
     .extract_fun() %>% 
-    dplyr::mutate(idx = 1:nrow(.)) %>% 
+    dplyr::mutate(idx = seq_len(nrow(.))) %>% 
     fun(...) %>% 
     dplyr::pull(idx)
 
@@ -33,7 +39,8 @@ subset_se <- function(se, axis, fun, ...){
 #changes metadata
 update_metadata_se <- function(se, axis, fun, ...) {
   
-  if (!axis %in% c("row", "col")) stop("Argument axis needs to be either row or col")
+  if (!axis %in% c("row", "col")) {
+    stop("Argument axis needs to be either row or col")}
   
   se_copy <- se
   coldt <- get_col_data(se_copy) %>% {if (axis == "row") . else fun(., ...)}
@@ -47,26 +54,33 @@ update_metadata_se <- function(se, axis, fun, ...) {
 #changes assays
 update_assays_se <- function(se, assays) {
 
-  SummarizedExperiment::SummarizedExperiment(assays = assays, 
-                                             colData = SummarizedExperiment::colData(se), 
-                                             rowData = SummarizedExperiment::rowData(se))
+  SummarizedExperiment::SummarizedExperiment(
+    assays = assays, 
+    colData = SummarizedExperiment::colData(se), 
+    rowData = SummarizedExperiment::rowData(se))
 }
 
 #perform arithmic to 2 equal-sized se's
 arith_se <- function(se1, se2, fun) {
   
-  if (!identical(SummarizedExperiment::assayNames(se1), SummarizedExperiment::assayNames(se2)))warning("The assay names of se1 and se2 are not the same")
-  if (!identical(get_col_data(se1), get_col_data(se2)))warning("The colData of se1 and se2 is not the same") 
-  if (!identical(get_row_data(se1), get_row_data(se2)))warning("The rowData of se1 and se2 is not the same") 
+  if (!identical(SummarizedExperiment::assayNames(se1), 
+                 SummarizedExperiment::assayNames(se2))) {
+    warning("The assay names of se1 and se2 are not the same")}
+  if (!identical(get_col_data(se1), get_col_data(se2))) {
+    warning("The colData of se1 and se2 is not the same")}
+  if (!identical(get_row_data(se1), get_row_data(se2))) {
+    warning("The rowData of se1 and se2 is not the same")}
   assays <- lapply(SummarizedExperiment::assayNames(se1), 
                    function(name) fun(SummarizedExperiment::assays(se1)[[name]], 
-                                      SummarizedExperiment::assays(se2)[[name]])) %>% 
+                                      SummarizedExperiment::assays(se2)[[name]])
+                   ) %>% 
     `names<-`(SummarizedExperiment::assayNames(se1))
   update_assays_se(se1, assays)
   
 }
 
-#create a df with all char cols from a df, list or matrix. Helper function for get_delim_df
+#create a df with all char cols from a df, list or matrix. Helper function for 
+# get_delim_df
 as.char.df <- function(.data) {
   .data %>% 
     data.frame(stringsAsFactors = FALSE) %>% 
@@ -80,16 +94,21 @@ get_delim_df <- function(se, assay_name = NULL) {
   coldt <- get_col_data(se) %>% as.char.df()
   rowdt <- get_row_data(se) %>% as.char.df()
   assay <- SummarizedExperiment::assays(se)[[assay_name]] %>% as.char.df() %>% 
-    `colnames<-`(paste0("X", 1:ncol(.))) %>% #conforms with names from the header df
+    #conforms with names from the header df
+    `colnames<-`(paste0("X", seq_len(ncol(.)))) %>% 
     `rownames<-`(NULL)
   
-  leftcol <- data.frame(col0 = c(toupper(assay_name), names(coldt), rep("", nrow(assay))))
+  leftcol <- data.frame(col0 = c(toupper(assay_name), names(coldt), 
+                                 rep("", nrow(assay))))
   middlecols <- data.frame(lapply(names(rowdt), function(name)
     c(name, rep("", ncol(coldt)), rowdt[[name]]))) %>% 
-    `colnames<-`(paste0("col", 1:ncol(rowdt)))
-  rightcols <- dplyr::bind_rows(dplyr::bind_cols(data.frame(rep("", nrow(coldt))), #header
-                                   coldt) %>% t %>% data.frame(stringsAsFactors = FALSE),
-                         assay) #values
+    `colnames<-`(paste0("col", seq_len(ncol(rowdt))))
+  rightcols <- dplyr::bind_rows(dplyr::bind_cols(
+    data.frame(rep("", nrow(coldt))), #header
+    coldt) %>% 
+      t %>% 
+      data.frame(stringsAsFactors = FALSE),
+    assay) #values
   
   dplyr::bind_cols(leftcol, middlecols, rightcols)
 }

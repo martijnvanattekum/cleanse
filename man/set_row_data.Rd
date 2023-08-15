@@ -11,11 +11,16 @@ set_row_data(se, rowdata)
 
 \item{rowdata}{data frame or tibble containing the coldata}
 }
+\value{
+A SummarizedExperiment with the new rowdata set
+}
 \description{
 As this does not require inplace operations, this can typically be used
 in a pipe
 }
 \examples{
-new_rd <- get_row_data(seq_se) \%>\% tidyr::unite(gene_group_name, c(gene_group, gene_name))
+data(seq_se)
+new_rd <- get_row_data(seq_se) \%>\% 
+tidyr::unite(gene_group_name, c(gene_group, gene_name))
 se_new_rowdata <- set_row_data(seq_se, new_rd)
 }

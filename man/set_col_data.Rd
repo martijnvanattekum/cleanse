@@ -11,11 +11,16 @@ set_col_data(se, coldata)
 
 \item{coldata}{data frame or tibble containing the coldata}
 }
+\value{
+A SummarizedExperiment with the new coldata set
+}
 \description{
 As this does not require inplace operations, this can typically be used
 in a pipe
 }
 \examples{
-new_cd <- get_col_data(seq_se) \%>\% tidyr::unite(time_treatment, c(time, treatment))
+data(seq_se)
+new_cd <- get_col_data(seq_se) \%>\% 
+tidyr::unite(time_treatment, c(time, treatment))
 se_new_coldata <- set_col_data(seq_se, new_cd)
 }

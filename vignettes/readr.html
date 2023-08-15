@@ -12,7 +12,7 @@
 
 <meta name="author" content="Martijn van Attekum" />
 
-<meta name="date" content="2023-08-03" />
+<meta name="date" content="2023-08-15" />
 
 <title>Writing SummarizedExperiments to a delimited text file</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Writing SummarizedExperiments to a
 delimited text file</h1>
 <h4 class="author">Martijn van Attekum</h4>
-<h4 class="date">2023-08-03</h4>
+<h4 class="date">2023-08-15</h4>
 
 
 
@@ -356,7 +356,8 @@ read_tsv, and read_delim can be used. To round the example
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(cleanse)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>seq_se <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">write_csv</span>(<span class="st">&quot;out.csv&quot;</span>, <span class="st">&quot;expression&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">data</span>(seq_se)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>seq_se <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">write_csv</span>(<span class="st">&quot;out.csv&quot;</span>, <span class="st">&quot;expression&quot;</span>)</span></code></pre></div>
 <p>When not providing a folder, the output is written to the current
 working directory. The beginning of the out.csv file will look like:</p>
 <pre><code>EXPRESSION gene_group gene_name                            
@@ -367,6 +368,53 @@ working directory. The beginning of the out.csv file will look like:</p>
                    IL     IL1R1 15.053  2.617 20.093 12.464 ...
                    IL     IL1R2  4.876 16.154 19.834  6.419 ...
                   ...       ...    ...    ...    ...    ... ...</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; Platform: x86_64-apple-darwin20 (64-bit)</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; Running under: macOS Ventura 13.4.1</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; Matrix products: default</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; locale:</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; [1] C/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; time zone: Europe/Berlin</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; tzcode source: internal</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; attached base packages:</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; [8] base     </span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt;  [1] SummarizedExperiment_1.31.1 Biobase_2.61.0             </span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt;  [3] GenomicRanges_1.53.1        GenomeInfoDb_1.37.2        </span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt;  [5] IRanges_2.35.2              S4Vectors_0.39.1           </span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt;  [7] BiocGenerics_0.47.0         MatrixGenerics_1.13.1      </span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt;  [9] matrixStats_1.0.0           cleanse_0.99.0             </span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; [11] dplyr_1.1.2                </span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt;  [1] sass_0.4.7              utf8_1.2.3              generics_0.1.3         </span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt;  [4] tidyr_1.3.0             SparseArray_1.1.11      bitops_1.0-7           </span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt;  [7] xml2_1.3.5              stringi_1.7.12          lattice_0.21-8         </span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co">#&gt; [10] digest_0.6.33           hms_1.1.3               magrittr_2.0.3         </span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; [13] evaluate_0.21           grid_4.3.1              fastmap_1.1.1          </span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; [16] pkgload_1.3.2.1         jsonlite_1.8.7          rprojroot_2.0.3        </span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#&gt; [19] Matrix_1.6-1            purrr_1.0.2             fansi_1.0.4            </span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="co">#&gt; [22] jquerylib_0.1.4         abind_1.4-5             cli_3.6.1              </span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#&gt; [25] rlang_1.1.1             crayon_1.5.2            XVector_0.41.1         </span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt; [28] cachem_1.0.8            yaml_2.3.7              withr_2.5.0            </span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; [31] DelayedArray_0.27.10    S4Arrays_1.1.5          tools_4.3.1            </span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt; [34] tzdb_0.4.0              GenomeInfoDbData_1.2.10 vctrs_0.6.3            </span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt; [37] R6_2.5.1                lifecycle_1.0.3         zlibbioc_1.47.0        </span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt; [40] stringr_1.5.0           pkgconfig_2.0.3         desc_1.4.2             </span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; [43] bslib_0.5.1             pillar_1.9.0            glue_1.6.2             </span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; [46] xfun_0.40               tibble_3.2.1            tidyselect_1.2.0       </span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; [49] rstudioapi_0.15.0       knitr_1.43              htmltools_0.5.6        </span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; [52] rmarkdown_2.24          readr_2.1.4             compiler_4.3.1         </span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; [55] roxygen2_7.2.3          RCurl_1.98-1.12</span></span></code></pre></div>
 </div>
 
 

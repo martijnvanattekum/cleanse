@@ -9,10 +9,15 @@ drop_metadata(se)
 \arguments{
 \item{se}{SummarizedExperiment to drop metadata for}
 }
+\value{
+A SummarizedExperiment after redundant metadata has been dropped
+}
 \description{
-For each of colData and rowData, removes the variables that have only 1 unique value
+For each of colData and rowData, removes the variables that have only 1 
+unique value
 }
 \examples{
 # as the se only contains time == 4 data, the time variable can be dropped
+data(seq_se)
 seq_se \%>\% filter(col, time == 4) \%>\% drop_metadata 
 }
