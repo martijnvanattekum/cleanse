@@ -18,12 +18,9 @@ This package contains a number of wrapper functions to extend the usage of se's:
 files
 
 As an example, compare how cleanse is used to subset columns for timepoint == 4 of a se:
-| Using native syntax                 | Using cleanse              |
-|:------------------------------------|:---------------------------|
-| coldata <- colData(se)              | se %>%                     |
-| indices <- which(coldata$time == 4) |     filter(col, time == 4) |
-| se[,indices]                        |                            | 
-
+| Using native syntax                                                               | Using cleanse                          |
+|:----------------------------------------------------------------------------------|:---------------------------------------|
+| coldata <- colData(se) <br> indices <- which(coldata$time == 4) <br> se[,indices] | se %>% <br>     filter(col, time == 4) |
 
 Usage information can be found by reading the vignettes: `browseVignettes("cleanse")`.
 
