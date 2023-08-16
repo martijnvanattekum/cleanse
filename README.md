@@ -20,7 +20,7 @@ files
 As an example, compare how cleanse is used to subset columns for timepoint == 4 of a se:
 | Using native syntax                                                               | Using cleanse                          |
 |:----------------------------------------------------------------------------------|:---------------------------------------|
-| coldata <- colData(se) <br> indices <- which(coldata$time == 4) <br> se[,indices] | se %>% <br>     filter(col, time == 4) |
+| <pre> coldata <- colData(se) <br> indices <- which(coldata$time == 4) <br> se[,indices] </pre> | <pre> se %>% <br>     filter(col, time == 4) </pre> |
 
 Usage information can be found by reading the vignettes: `browseVignettes("cleanse")`.
 
