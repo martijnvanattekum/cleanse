@@ -17,6 +17,14 @@ This package contains a number of wrapper functions to extend the usage of se's:
 - write functions: to print the options of a se and to write se's to delimited 
 files
 
+As an example, compare how cleanse is used to subset columns for timepoint == 4 of a se:
+| Using native syntax                 | Using cleanse              |
+|:------------------------------------|:---------------------------|
+| coldata <- colData(se)              | se %>%                     |
+| indices <- which(coldata$time == 4) |     filter(col, time == 4) |
+| se[,indices]                        |                            | 
+
+
 Usage information can be found by reading the vignettes: `browseVignettes("cleanse")`.
 
 ## Supported dplyr functions
