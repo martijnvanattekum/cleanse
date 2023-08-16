@@ -30,7 +30,7 @@ _Functions that subset the se based on the rowData or colData_
   - `filter()` picks rows/cols based on the se's attached rowData/colData
   - `slice()` picks rows/cols by position
   - `arrange()` changes the ordering of the rows
-  - `sample_slice())` picks a random portion of rows or cols from the se.
+  - `sample_slice()` picks a random portion of rows or cols from the se.
 
 _Functions that change the se's rowData or colData_
 - `select()` selects variables
@@ -54,9 +54,10 @@ _Functions that change the se's rowData or colData_
 
 ## Installation
 ``` r
-# install.packages("devtools")
-devtools::install_github("martijnvanattekum/cleanse",
-build_opts = c("--no-resave-data", "--no-manual"))
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("cleanse")
 ```
 
 ## Usage
