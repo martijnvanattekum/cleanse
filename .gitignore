@@ -5,7 +5,7 @@
 .DS_Store
 .renviron
 .rprofile
-.rproj
+*.rproj
 .rapp.history
 .o
 .sl
