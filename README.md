@@ -17,10 +17,11 @@ This package contains a number of wrapper functions to extend the usage of se's:
 - write functions: to print the options of a se and to write se's to delimited 
 files
 
-As an example, compare how cleanse is used to subset columns for timepoint == 4 of a se:
+As an example, compare how cleanse is used to subset rows for gene_group NOTCH 
+and then arrange the columns by patient
 | Using native syntax                                                               | Using cleanse                          |
 |:----------------------------------------------------------------------------------|:---------------------------------------|
-| <pre> coldata <- colData(se) <br> indices <- which(coldata$time == 4) <br> se[,indices] </pre> | <pre> se %>% <br>     filter(col, time == 4) </pre> |
+| <pre>rowdata <- rowData(se)<br>se <- se[rowdata$gene_group == "NOTCH", ]<br>se <- se[, order(se$patient)]</pre> | <pre>se <- se %>%<br>    filter(row, gene_group == "NOTCH") %>%<br>    arrange(col, patient)</pre> |
 
 Usage information can be found by reading the vignettes: `browseVignettes("cleanse")`.
 
