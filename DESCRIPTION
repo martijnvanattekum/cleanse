@@ -19,7 +19,7 @@ Imports:
   stats (>= 4.0)
 Depends:
   dplyr (>= 1.0),
-  R (>= 4.3.0)
+  R (>= 4.2.0)
 RoxygenNote: 7.2.3
 Suggests:
     knitr
