@@ -18,7 +18,6 @@ print_options <- function(se) {
   printdata(get_col_data(se))
   cat(paste("\n** ROWDATA OPTIONS FOR", deparse(substitute(se)), "** \n"))
   printdata(get_row_data(se))
-  se
 }
 
 #' Write a se to csv format
